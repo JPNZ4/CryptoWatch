@@ -4,6 +4,7 @@
 #include "../lib/imgui/imgui.h"
 #include "../lib/imgui/imgui_impl_glfw.h"
 #include "../lib/imgui/imgui_impl_opengl3.h"
+#include "../lib/imgui/implot.h"
 #include <curl/curl.h>
 
 GLFWwindow *initialize()
@@ -72,10 +73,14 @@ int main()
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
 
+    ImPlot::CreateContext();
+
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 
+    // test vars
     bool my_tool_active = true;
+    int bar_data[11] = {2, 3, 4, 5, 2, 7, 7, 9, 1, 0, 11};
 
     while (!glfwWindowShouldClose(window))
     {
@@ -117,6 +122,17 @@ int main()
             ImGui::Text("%04d: Some text", n);
         ImGui::EndChild();
         ImGui::End();
+
+        {
+            // Implot test example
+            ImGui::Begin("Bar Window Test");
+            if (ImPlot::BeginPlot("My Plot"))
+            {
+                ImPlot::PlotBars("My Bar Plot", bar_data, 11);
+                ImPlot::EndPlot();
+            }
+            ImGui::End();
+        }
 
         // rendering
         ImGui::Render();

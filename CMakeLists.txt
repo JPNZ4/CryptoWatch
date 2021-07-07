@@ -30,6 +30,11 @@ set(SOURCES
     ${IMGUI_DIR}/imstb_rectpack.h
     ${IMGUI_DIR}/imstb_textedit.h
     ${IMGUI_DIR}/imstb_truetype.h
+    ${IMGUI_DIR}/implot.h
+    ${IMGUI_DIR}/implot.cpp
+    ${IMGUI_DIR}/implot_internal.h
+    ${IMGUI_DIR}/implot_items.cpp
+    ${IMGUI_DIR}/implot_demo.cpp
     )
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
