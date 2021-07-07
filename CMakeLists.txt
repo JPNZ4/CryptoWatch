@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
-add_definitions(-std=c++17)
+set(CMAKE_CXX_STANDARD 17)
 project(CryptoWatch)
+message("Project name: " ${CMAKE_PROJECT_NAME})
 
 # Flags
 set(CXX_FLAGS "-Wall")
@@ -9,9 +10,28 @@ set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 # Source files
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(SOURCES "${SRC_DIR}/main.cpp")
+set(IMGUI_DIR ${LIB_DIR}/imgui)
 
-add_executable(CryptoWatch src/main.cpp)
+# Sources + ImGui
+set(SOURCES
+    ${SRC_DIR}/main.cpp
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui.h
+    ${IMGUI_DIR}/imconfig.h
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/imgui_impl_glfw.h
+    ${IMGUI_DIR}/imgui_impl_opengl3.cpp
+    ${IMGUI_DIR}/imgui_impl_opengl3.h
+    ${IMGUI_DIR}/imgui_internal.h
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imstb_rectpack.h
+    ${IMGUI_DIR}/imstb_textedit.h
+    ${IMGUI_DIR}/imstb_truetype.h
+    )
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 #GLFW
 set(GLFW_DIR "${LIB_DIR}/glfw")
