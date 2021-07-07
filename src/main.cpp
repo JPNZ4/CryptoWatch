@@ -90,6 +90,8 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        const ImVec2 cursorPos(0, 0);
+        ImGui::SetNextWindowPos(cursorPos);
         // Create a window called "My First Tool", with a menu bar.
         ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
         if (ImGui::BeginMenuBar())
@@ -124,6 +126,8 @@ int main()
         ImGui::End();
 
         {
+            const ImVec2 cursorPos(650, 0);
+            ImGui::SetNextWindowPos(cursorPos);
             // Implot test example
             ImGui::Begin("Bar Window Test");
             if (ImPlot::BeginPlot("My Plot"))
