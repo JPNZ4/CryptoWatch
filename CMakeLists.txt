@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(IMGUI_DIR ${LIB_DIR}/imgui)
+set(JSON_DIR ${LIB_DIR}/nlohmann)
 
 # Sources + ImGui
 set(SOURCES
@@ -35,6 +36,7 @@ set(SOURCES
     ${IMGUI_DIR}/implot_internal.h
     ${IMGUI_DIR}/implot_items.cpp
     ${IMGUI_DIR}/implot_demo.cpp
+    ${JSON_DIR}/json.hpp
     )
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 

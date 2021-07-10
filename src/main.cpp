@@ -1,11 +1,27 @@
 #include <iostream>
-#include <GLFW/glfw3.h>
+#include <vector>
+
+#include <curl/curl.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "../lib/imgui/imgui.h"
 #include "../lib/imgui/imgui_impl_glfw.h"
 #include "../lib/imgui/imgui_impl_opengl3.h"
 #include "../lib/imgui/implot.h"
-#include <curl/curl.h>
+#include "../lib/nlohmann/json.hpp"
+
+struct CoinData {
+    std::string id;
+    std::string rank;
+    std::string symbol;
+    std::string name;
+    std::string supply;
+    std::string marketCapUsd;
+    std::string volumeUsd24Hr;
+    std::string priceUsd;
+    std::string changePercent24Hr;
+};
 
 GLFWwindow *initialize()
 {
@@ -41,6 +57,26 @@ GLFWwindow *initialize()
     return window;
 }
 
+size_t static curl_write(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+    //  userp += strlen(userp);  // Skipping to first unpopulated char
+     memcpy(userp, buffer, nmemb);  // Populating it.
+     return nmemb;
+}
+
+std::size_t bf_callback(char* ptr, size_t size, size_t num, void* userdata)
+{
+    if(auto s = reinterpret_cast<std::string*>(userdata))
+    {
+        // only get here if userdata is not nullptr
+        s->append(ptr, ptr + (size * num));
+        return size * num;
+    }
+
+    return 0; // indicate error to framework
+}
+
+
 int main()
 {
     GLFWwindow *window = initialize();
@@ -52,6 +88,9 @@ int main()
     // Curl example getting basic api data
     CURL *curl;
     CURLcode res;
+
+    std::string str_callback;
+
     curl = curl_easy_init();
     if (curl)
     {
@@ -59,11 +98,44 @@ int main()
         curl_easy_setopt(curl, CURLOPT_URL, "api.coincap.io/v2/assets");
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str_callback);
         struct curl_slist *headers = NULL;
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
     }
     curl_easy_cleanup(curl);
+
+    auto jsonCoinData = nlohmann::json::parse(str_callback);
+
+    std::vector<CoinData> CryptoCoinsData;
+
+    // Check there is an entry with data - which contains the array of coin data
+    if (jsonCoinData.find("data") != jsonCoinData.end()) {
+        for (auto& [key, value] : jsonCoinData.items()) {
+            // Ensure the data contains an array
+            if (value.is_array())
+            {
+                // Loop all elements (coin) of array
+                for (auto& element : value) {
+                    // Convert JSON Object into CoinData struct
+                    CoinData coin {
+                        element["id"].get<std::string>(),
+                        element["rank"].get<std::string>(),
+                        element["symbol"].get<std::string>(),
+                        element["name"].get<std::string>(),
+                        element["supply"].get<std::string>(),
+                        element["marketCapUsd"].get<std::string>(),
+                        element["volumeUsd24Hr"].get<std::string>(),
+                        element["priceUsd"].get<std::string>(),
+                        element["changePercent24Hr"].get<std::string>(),
+                    };
+                    // Push CoinData struct to array
+                    CryptoCoinsData.push_back(coin);
+                }
+            }
+        }
+    }
 
     // Set the clear color to a nice green
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
@@ -136,6 +208,10 @@ int main()
                 ImPlot::EndPlot();
             }
             ImGui::End();
+        }
+
+        {
+            ImGui::ShowDemoWindow();
         }
 
         // rendering
