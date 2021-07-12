@@ -90,15 +90,9 @@ std::size_t bf_callback(char *ptr, size_t size, size_t num, void *userdata)
     return 0; // indicate error to framework
 }
 
-int main()
+std::vector<CoinData> networkCall()
 {
-    GLFWwindow *window = initialize();
-    if (!window)
-    {
-        return 0;
-    }
-
-    // Curl example getting basic api data
+        // Curl example getting basic api data
     CURL *curl;
     CURLcode res;
 
@@ -152,6 +146,18 @@ int main()
             }
         }
     }
+    return CryptoCoinsData;
+}
+
+int main()
+{
+    GLFWwindow *window = initialize();
+    if (!window)
+    {
+        return 0;
+    }
+
+    std::vector<CoinData> CryptoCoinsData = networkCall();
 
     // Set the clear color to a nice green
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
