@@ -11,7 +11,8 @@
 #include "../lib/imgui/implot.h"
 #include "../lib/nlohmann/json.hpp"
 
-struct CoinData {
+struct CoinData
+{
     std::string id;
     std::string rank;
     std::string symbol;
@@ -21,6 +22,19 @@ struct CoinData {
     std::string volumeUsd24Hr;
     std::string priceUsd;
     std::string changePercent24Hr;
+};
+
+enum CyrpocurrencyColumnID
+{
+    ColumnID_ID,
+    ColumnID_Rank,
+    ColumnID_Symbol,
+    ColumnID_Name,
+    ColumnID_Supply,
+    ColumnID_MarketCapUsd,
+    ColumnID_VolumeUsd24Hr,
+    ColumnID_PriceUsd,
+    ColumnID_ChangePercent24Hr,
 };
 
 GLFWwindow *initialize()
@@ -60,13 +74,13 @@ GLFWwindow *initialize()
 size_t static curl_write(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     //  userp += strlen(userp);  // Skipping to first unpopulated char
-     memcpy(userp, buffer, nmemb);  // Populating it.
-     return nmemb;
+    memcpy(userp, buffer, nmemb); // Populating it.
+    return nmemb;
 }
 
-std::size_t bf_callback(char* ptr, size_t size, size_t num, void* userdata)
+std::size_t bf_callback(char *ptr, size_t size, size_t num, void *userdata)
 {
-    if(auto s = reinterpret_cast<std::string*>(userdata))
+    if (auto s = reinterpret_cast<std::string *>(userdata))
     {
         // only get here if userdata is not nullptr
         s->append(ptr, ptr + (size * num));
@@ -75,7 +89,6 @@ std::size_t bf_callback(char* ptr, size_t size, size_t num, void* userdata)
 
     return 0; // indicate error to framework
 }
-
 
 int main()
 {
@@ -111,15 +124,18 @@ int main()
     std::vector<CoinData> CryptoCoinsData;
 
     // Check there is an entry with data - which contains the array of coin data
-    if (jsonCoinData.find("data") != jsonCoinData.end()) {
-        for (auto& [key, value] : jsonCoinData.items()) {
+    if (jsonCoinData.find("data") != jsonCoinData.end())
+    {
+        for (auto &[key, value] : jsonCoinData.items())
+        {
             // Ensure the data contains an array
             if (value.is_array())
             {
                 // Loop all elements (coin) of array
-                for (auto& element : value) {
+                for (auto &element : value)
+                {
                     // Convert JSON Object into CoinData struct
-                    CoinData coin {
+                    CoinData coin{
                         element["id"].get<std::string>(),
                         element["rank"].get<std::string>(),
                         element["symbol"].get<std::string>(),
@@ -162,56 +178,79 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        const ImVec2 cursorPos(0, 0);
-        ImGui::SetNextWindowPos(cursorPos);
-        // Create a window called "My First Tool", with a menu bar.
-        ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-        if (ImGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Open..", "Ctrl+O"))
-                { /* Do stuff */
-                }
-                if (ImGui::MenuItem("Save", "Ctrl+S"))
-                { /* Do stuff */
-                }
-                if (ImGui::MenuItem("Close", "Ctrl+W"))
-                {
-                    my_tool_active = false;
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
-        // Plot some values
-        const float my_values[] = {0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f};
-        ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-        // Display contents in a scrolling region
-        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
-        ImGui::BeginChild("Scrolling");
-        for (int n = 0; n < 50; n++)
-            ImGui::Text("%04d: Some text", n);
-        ImGui::EndChild();
-        ImGui::End();
-
-        {
-            const ImVec2 cursorPos(650, 0);
-            ImGui::SetNextWindowPos(cursorPos);
-            // Implot test example
-            ImGui::Begin("Bar Window Test");
-            if (ImPlot::BeginPlot("My Plot"))
-            {
-                ImPlot::PlotBars("My Bar Plot", bar_data, 11);
-                ImPlot::EndPlot();
-            }
-            ImGui::End();
+            // TODO - Delete - For Table reference
+            // ImGui::ShowDemoWindow();
         }
 
         {
-            ImGui::ShowDemoWindow();
+            static ImGuiTableFlags flags =
+                ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_ScrollY;
+            // Using those as a base value to create width/height that are factor of the size of our font
+            const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+            const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+            if (ImGui::BeginTable("Cryptocurrency Prices", 8, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
+            {
+                // Declare columns
+                // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
+                // This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
+                // Demonstrate using a mixture of flags among available sort-related flags:
+                // - ImGuiTableColumnFlags_DefaultSort
+                // - ImGuiTableColumnFlags_NoSort / ImGuiTableColumnFlags_NoSortAscending / ImGuiTableColumnFlags_NoSortDescending
+                // - ImGuiTableColumnFlags_PreferSortAscending / ImGuiTableColumnFlags_PreferSortDescending
+                // ImGui::TableSetupColumn("Id", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_ID);
+                ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Rank);
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Name);
+                ImGui::TableSetupColumn("Symbol", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Symbol);
+                ImGui::TableSetupColumn("Price", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_PriceUsd);
+                ImGui::TableSetupColumn("24Hr %", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_ChangePercent24Hr);
+                ImGui::TableSetupColumn("Supply", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Supply);
+                ImGui::TableSetupColumn("Volume (24hr)", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_VolumeUsd24Hr);
+                ImGui::TableSetupColumn("Market Cap", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_MarketCapUsd);
+                ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
+                ImGui::TableHeadersRow();
+
+                // Sort our data if sort specs have been changed!
+                // if (ImGuiTableSortSpecs* sorts_specs = ImGui::TableGetSortSpecs())
+                // if (sorts_specs->SpecsDirty)
+                // {
+                //     MyItem::s_current_sort_specs = sorts_specs; // Store in variable accessible by the sort function.
+                //     if (items.Size > 1)
+                //         qsort(&items[0], (size_t)items.Size, sizeof(items[0]), MyItem::CompareWithSortSpecs);
+                //     MyItem::s_current_sort_specs = NULL;
+                //     sorts_specs->SpecsDirty = false;
+                // }
+
+                // Demonstrate using clipper for large vertical lists
+                ImGuiListClipper clipper;
+                clipper.Begin(CryptoCoinsData.size());
+                while (clipper.Step())
+                    for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
+                    {
+                        // Display a data item
+                        CoinData *item = &CryptoCoinsData[row_n];
+                        ImGui::PushID(std::stoi(item->rank));
+                        ImGui::TableNextRow();
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->rank.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(item->name.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->symbol.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->priceUsd.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->changePercent24Hr.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->supply.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->volumeUsd24Hr.c_str());
+                        ImGui::TableNextColumn();
+                        ImGui::Text(item->marketCapUsd.c_str());
+                        ImGui::PopID();
+                    }
+                ImGui::EndTable();
+            }
         }
 
         // rendering
