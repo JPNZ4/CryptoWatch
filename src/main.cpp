@@ -1,5 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <functional>
 
 #include <curl/curl.h>
 #include <glad/glad.h>
@@ -105,6 +109,17 @@ std::string getJSONValueString(nlohmann::json value)
     }
 }
 
+void timer_start(std::function<void (std::vector<CoinData>&)> func, unsigned int interval, std::vector<CoinData> &CryptoCoinsData)
+{
+    std::thread([func, interval, &CryptoCoinsData]() {
+        while (true)
+        {
+            func(CryptoCoinsData);
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+        }
+    }).detach();
+}
+
 void networkCall(std::vector<CoinData> &CryptoCoinsData)
 {
         // Curl example getting basic api data
@@ -177,7 +192,8 @@ int main()
     }
 
     std::vector<CoinData> CryptoCoinsData;
-    networkCall(CryptoCoinsData);
+    // Start network request in seperate thread to get data
+    timer_start(networkCall, 2000, CryptoCoinsData);
 
     // Set the clear color to a nice green
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
