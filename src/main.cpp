@@ -105,7 +105,7 @@ std::string getJSONValueString(nlohmann::json value)
     }
 }
 
-std::vector<CoinData> networkCall()
+void networkCall(std::vector<CoinData> &CryptoCoinsData)
 {
         // Curl example getting basic api data
     CURL *curl;
@@ -130,7 +130,10 @@ std::vector<CoinData> networkCall()
 
     auto jsonCoinData = nlohmann::json::parse(str_callback);
 
-    std::vector<CoinData> CryptoCoinsData;
+    if (CryptoCoinsData.size() > 0)
+    {
+        CryptoCoinsData.clear();
+    } 
 
     // Check there is an entry with data - which contains the array of coin data
     if (jsonCoinData.find("data") != jsonCoinData.end())
@@ -163,7 +166,6 @@ std::vector<CoinData> networkCall()
             }
         }
     }
-    return CryptoCoinsData;
 }
 
 int main()
@@ -174,7 +176,8 @@ int main()
         return 0;
     }
 
-    std::vector<CoinData> CryptoCoinsData = networkCall();
+    std::vector<CoinData> CryptoCoinsData;
+    networkCall(CryptoCoinsData);
 
     // Set the clear color to a nice green
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
