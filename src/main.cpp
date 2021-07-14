@@ -18,10 +18,12 @@ struct CoinData
     std::string symbol;
     std::string name;
     std::string supply;
+    std::string maxSupply;
     std::string marketCapUsd;
     std::string volumeUsd24Hr;
     std::string priceUsd;
     std::string changePercent24Hr;
+    std::string vwap24Hr;
 };
 
 enum CyrpocurrencyColumnID
@@ -90,6 +92,19 @@ std::size_t bf_callback(char *ptr, size_t size, size_t num, void *userdata)
     return 0; // indicate error to framework
 }
 
+// All responses are string unless they are null, special function to handle the null cases
+std::string getJSONValueString(nlohmann::json value)
+{
+    if (value.is_null())
+    {
+        return "";
+    }
+    else
+    {
+        return value.get<std::string>();
+    }
+}
+
 std::vector<CoinData> networkCall()
 {
         // Curl example getting basic api data
@@ -130,15 +145,17 @@ std::vector<CoinData> networkCall()
                 {
                     // Convert JSON Object into CoinData struct
                     CoinData coin{
-                        element["id"].get<std::string>(),
-                        element["rank"].get<std::string>(),
-                        element["symbol"].get<std::string>(),
-                        element["name"].get<std::string>(),
-                        element["supply"].get<std::string>(),
-                        element["marketCapUsd"].get<std::string>(),
-                        element["volumeUsd24Hr"].get<std::string>(),
-                        element["priceUsd"].get<std::string>(),
-                        element["changePercent24Hr"].get<std::string>(),
+                        getJSONValueString(element["id"]),
+                        getJSONValueString(element["rank"]),
+                        getJSONValueString(element["symbol"]),
+                        getJSONValueString(element["name"]),
+                        getJSONValueString(element["supply"]),
+                        getJSONValueString(element["maxSupply"]),
+                        getJSONValueString(element["marketCapUsd"]),
+                        getJSONValueString(element["volumeUsd24Hr"]),
+                        getJSONValueString(element["priceUsd"]),
+                        getJSONValueString(element["changePercent24Hr"]),
+                        getJSONValueString(element["vwap24Hr"]),
                     };
                     // Push CoinData struct to array
                     CryptoCoinsData.push_back(coin);
