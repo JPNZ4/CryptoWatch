@@ -77,13 +77,6 @@ GLFWwindow *initialize()
     return window;
 }
 
-size_t static curl_write(void *buffer, size_t size, size_t nmemb, void *userp)
-{
-    //  userp += strlen(userp);  // Skipping to first unpopulated char
-    memcpy(userp, buffer, nmemb); // Populating it.
-    return nmemb;
-}
-
 std::size_t bf_callback(char *ptr, size_t size, size_t num, void *userdata)
 {
     if (auto s = reinterpret_cast<std::string *>(userdata))
