@@ -280,6 +280,20 @@ int main()
             ImGui::End();
         }
 
+        {
+            ImGui::Begin("Bar Graph Test");
+            // Each Bar is data in array
+            const char* labels[] = {"BTC", "ETH", "ADA", "TXX", "ONE"};
+            float values[] = { 0.003, 0.0001, 0.000, 0.0002, 0.01 };
+            const double positions[] = { 1, 2, 3, 4, 5};
+            ImPlot::SetNextPlotTicksX(positions, 5, labels);
+            if (ImPlot::BeginPlot("Bar Plot")) {
+                ImPlot::PlotBars("My Bar Plot", values, 5);
+                ImPlot::EndPlot();
+            }
+            ImGui::End();
+        }
+
         
 
         {
