@@ -30,6 +30,13 @@ struct CoinData
     std::string vwap24Hr;
 };
 
+struct CoinGainLoss {
+    const char* largestLabels[5] = { "", "" , "", "", ""};
+    float largestValues[5] = {0, 0, 0, 0, 0};
+    const char* smallestLabels[5] = { "", "" , "", "", ""};;
+    float smallestValues[5] = {0, 0, 0, 0, 0};
+};
+
 enum CyrpocurrencyColumnID
 {
     ColumnID_ID,
@@ -102,12 +109,12 @@ std::string getJSONValueString(nlohmann::json value)
     }
 }
 
-void timer_start(std::function<void (std::vector<CoinData>&)> func, unsigned int interval, std::vector<CoinData> &CryptoCoinsData)
+void timer_start(std::function<void (std::vector<CoinData>&, CoinGainLoss&)> func, unsigned int interval, std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss)
 {
-    std::thread([func, interval, &CryptoCoinsData]() {
+    std::thread([func, interval, &CryptoCoinsData, &coinGainLoss]() {
         while (true)
         {
-            func(CryptoCoinsData);
+            func(CryptoCoinsData, coinGainLoss);
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
         }
     }).detach();
@@ -164,7 +171,22 @@ bool sortVector(const CoinData& a, const CoinData& b)
     return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
 }
 
-void networkCall(std::vector<CoinData> &CryptoCoinsData)
+
+
+void createBiggestGainsArray(std::vector<CoinData> CryptoCoinsData, CoinGainLoss &coinGainLoss)
+{
+    auto size = CryptoCoinsData.size() - 1;
+    std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), sortVector);
+    for (int i = 0; i < 5; i++)
+    {
+        coinGainLoss.largestValues[i] = std::stof(CryptoCoinsData[i].changePercent24Hr);
+        coinGainLoss.largestLabels[i] = CryptoCoinsData[i].symbol.c_str();
+        coinGainLoss.smallestValues[i] = std::stof(CryptoCoinsData[size - i].changePercent24Hr);
+        coinGainLoss.smallestLabels[i] = CryptoCoinsData[size - i].symbol.c_str();
+    }
+}
+
+void networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss)
 {
     // Curl example getting basic api data
     CURL *curl;
@@ -227,22 +249,15 @@ void networkCall(std::vector<CoinData> &CryptoCoinsData)
         }
     }
     std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), sortVector);
+    if (CryptoCoinsData.size() > 0)
+    {
+        createBiggestGainsArray(CryptoCoinsData, coinGainLoss);
+    }
 }
 
 
 
-void createBiggestGainsArray(std::vector<CoinData> &CryptoCoinsData)
-{
-    const char* labels[5];
-    float values[5];
-    // Loop through vector
-    // Convert each price to double
-    // get symbol
-    // check if greater then lowest
-    // if is add to list
-    // remove lowest
 
-}
 
 
 
@@ -259,8 +274,10 @@ int main()
 
     // coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
     std::vector<CoinData> CryptoCoinsData;
+    CoinGainLoss coinsGainsAndLosses;
     // Start network request in seperate thread to get data
-    timer_start(networkCall, 2000, CryptoCoinsData);
+    timer_start(networkCall, 2000, CryptoCoinsData, coinsGainsAndLosses);
+
 
     // Set the clear color to a nice greeny
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
@@ -305,19 +322,26 @@ int main()
         // }
 
         {
-            // TODO - Add function to get top 5 increase / decrease 24hr% coins to display in graphs
-            // TODO - Link Data to two graphs - Top Gains / Top Decreases
             ImGui::Begin("Bar Graph Test");
             // Each Bar is data in array
-            const char* labels[] = {"BTC", "ETH", "ADA", "TXX", "ONE"};
-            float values[] = { 0.003, 0.0001, 0.000, 0.0002, 0.01 };
             const double positions[] = { 1, 2, 3, 4, 5};
-            ImPlot::SetNextPlotTicksX(positions, 5, labels);
+            ImPlot::SetNextPlotTicksX(positions, 5, coinsGainsAndLosses.largestLabels);
             if (ImPlot::BeginPlot("Bar Plot")) {
-                ImPlot::PlotBars("My Bar Plot", values, 5);
+                ImPlot::PlotBars("My Bar Plot", coinsGainsAndLosses.largestValues, 5);
                 ImPlot::EndPlot();
             }
             ImGui::End();
+        }
+
+        {
+             ImGui::Begin("Bar Graph Test2");
+             const double positions[] = { 1, 2, 3, 4, 5};
+            ImPlot::SetNextPlotTicksX(positions, 5, coinsGainsAndLosses.smallestLabels);
+            if (ImPlot::BeginPlot("Bar Plot2")) {
+                ImPlot::PlotBars("My Bar Plot2", coinsGainsAndLosses.smallestValues, 5);
+                ImPlot::EndPlot();
+            }
+             ImGui::End();
         }
 
         
