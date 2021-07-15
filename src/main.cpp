@@ -159,6 +159,11 @@ void coinHistoryRequest(std::string id, std::string interval, std::string start,
     }
 }
 
+bool sortVector(const CoinData& a, const CoinData& b)
+{
+    return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
+}
+
 void networkCall(std::vector<CoinData> &CryptoCoinsData)
 {
     // Curl example getting basic api data
@@ -179,10 +184,11 @@ void networkCall(std::vector<CoinData> &CryptoCoinsData)
         struct curl_slist *headers = NULL;
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
+        std::cout << "Result: " << res << std::endl;
     }
     curl_easy_cleanup(curl);
 
-    auto jsonCoinData = nlohmann::json::parse(str_callback);
+    auto jsonCoinData = nlohmann::json::parse(str_callback); // Check for crash here? Happened once?
 
     if (CryptoCoinsData.size() > 0)
     {
@@ -220,7 +226,25 @@ void networkCall(std::vector<CoinData> &CryptoCoinsData)
             }
         }
     }
+    std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), sortVector);
 }
+
+
+
+void createBiggestGainsArray(std::vector<CoinData> &CryptoCoinsData)
+{
+    const char* labels[5];
+    float values[5];
+    // Loop through vector
+    // Convert each price to double
+    // get symbol
+    // check if greater then lowest
+    // if is add to list
+    // remove lowest
+
+}
+
+
 
 int main()
 {
@@ -233,10 +257,10 @@ int main()
     std::vector<double> xAxis;
     std::vector<double> yAxis;
 
-    coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
+    // coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
     std::vector<CoinData> CryptoCoinsData;
     // Start network request in seperate thread to get data
-    // timer_start(networkCall, 2000, CryptoCoinsData);
+    timer_start(networkCall, 2000, CryptoCoinsData);
 
     // Set the clear color to a nice greeny
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
@@ -268,19 +292,21 @@ int main()
             // ImGui::ShowDemoWindow();
         }
 
-        {
-            ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-            ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
-            if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
-            {
-                ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
-                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-                ImPlot::EndPlot();
-            }
-            ImGui::End();
-        }
+        // {
+        //     ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+        //     ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
+        //     if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
+        //     {
+        //         ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
+        //         ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+        //         ImPlot::EndPlot();
+        //     }
+        //     ImGui::End();
+        // }
 
         {
+            // TODO - Add function to get top 5 increase / decrease 24hr% coins to display in graphs
+            // TODO - Link Data to two graphs - Top Gains / Top Decreases
             ImGui::Begin("Bar Graph Test");
             // Each Bar is data in array
             const char* labels[] = {"BTC", "ETH", "ADA", "TXX", "ONE"};
