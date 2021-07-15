@@ -113,7 +113,7 @@ void timer_start(std::function<void (std::vector<CoinData>&)> func, unsigned int
     }).detach();
 }
 
-void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
+void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end, std::vector<double> &xAxis, std::vector<double> &yAxis)
 {
     CURL *curl;
     CURLcode res;
@@ -138,6 +138,26 @@ void coinHistoryRequest(std::string id, std::string interval, std::string start,
     curl_easy_cleanup(curl);
     std::cout << "Result: " << str_callback << std::endl;
     auto jsonCoinData = nlohmann::json::parse(str_callback);
+
+    // Check there is an entry with data - which contains the array of coin data
+    if (jsonCoinData.find("data") != jsonCoinData.end())
+    {
+        for (auto &[key, value] : jsonCoinData.items())
+        {
+            // Ensure the data contains an array
+            if (value.is_array())
+            {
+                // Loop all elements (coin) of array
+                for (auto &element : value)
+                {
+                    double price = std::stod(element["priceUsd"].get<std::string>());
+                    double time = element["time"].get<double>() / 1000; // Convert to seconds for usage as time in ImPlot
+                    xAxis.push_back(time);
+                    yAxis.push_back(price);
+                }
+            }
+        }
+    }
 }
 
 void networkCall(std::vector<CoinData> &CryptoCoinsData)
@@ -211,12 +231,15 @@ int main()
         return 0;
     }
 
-    // coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000"); // Example to get single coin history
+    std::vector<double> xAxis;
+    std::vector<double> yAxis;
+
+    coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
     std::vector<CoinData> CryptoCoinsData;
     // Start network request in seperate thread to get data
-    timer_start(networkCall, 2000, CryptoCoinsData);
+    // timer_start(networkCall, 2000, CryptoCoinsData);
 
-    // Set the clear color to a nice green
+    // Set the clear color to a nice greeny
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
     std::string glsl_version = "#version 150";
     IMGUI_CHECKVERSION();
@@ -244,6 +267,16 @@ int main()
         {
             // TODO - Delete - For Table reference
             // ImGui::ShowDemoWindow();
+        }
+
+        {
+            ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
+            if (ImPlot::BeginPlot("Line Plot", "x", "f(x)")) 
+            {
+                ImPlot::PlotLine("sin(x)", xAxis.data(), yAxis.data(), 194);
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+                ImPlot::EndPlot();
+            }
         }
 
         {
