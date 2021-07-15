@@ -113,9 +113,36 @@ void timer_start(std::function<void (std::vector<CoinData>&)> func, unsigned int
     }).detach();
 }
 
+void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
+{
+    CURL *curl;
+    CURLcode res;
+
+    std::string str_callback;
+
+    std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
+
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_easy_setopt(curl, CURLOPT_URL, requestString.c_str()); // Needs to be char*        
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str_callback);
+        struct curl_slist *headers = NULL;
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        res = curl_easy_perform(curl);
+    }
+    curl_easy_cleanup(curl);
+    std::cout << "Result: " << str_callback << std::endl;
+    auto jsonCoinData = nlohmann::json::parse(str_callback);
+}
+
 void networkCall(std::vector<CoinData> &CryptoCoinsData)
 {
-        // Curl example getting basic api data
+    // Curl example getting basic api data
     CURL *curl;
     CURLcode res;
 
@@ -184,6 +211,7 @@ int main()
         return 0;
     }
 
+    // coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000"); // Example to get single coin history
     std::vector<CoinData> CryptoCoinsData;
     // Start network request in seperate thread to get data
     timer_start(networkCall, 2000, CryptoCoinsData);
