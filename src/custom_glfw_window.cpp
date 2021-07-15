@@ -3,13 +3,13 @@
 #include <iostream>
 #include "custom_glfw_window.h"
 
-GLFWwindow* CustomGLFWWindow::CreateWindow()
+void CustomGLFWWindow::CreateWindow()
 {
     int glfwInitRes = glfwInit();
         if (!glfwInitRes)
         {
             std::cout << "Unable to initialize GLFW" << std::endl;
-            return nullptr;
+            return;
         }
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -17,12 +17,12 @@ GLFWwindow* CustomGLFWWindow::CreateWindow()
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        GLFWwindow *window = glfwCreateWindow(1280, 720, "CryptoWatch", nullptr, nullptr);
+        window = glfwCreateWindow(1280, 720, "CryptoWatch", nullptr, nullptr);
         if (!window)
         {
             std::cout << "Unable to create GLFW window" << std::endl;
             glfwTerminate();
-            return nullptr;
+            return;
         }
 
         glfwMakeContextCurrent(window);
@@ -32,7 +32,6 @@ GLFWwindow* CustomGLFWWindow::CreateWindow()
             std::cout << "Unable to initialize glad" << std::endl;
             glfwDestroyWindow(window);
             glfwTerminate();
-            return nullptr;
+            return;
         }
-        return window;
 }

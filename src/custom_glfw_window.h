@@ -2,5 +2,7 @@
 
 class CustomGLFWWindow {
     public:
-        GLFWwindow* CreateWindow();
+        void CreateWindow();
+        // window uses glfwCreateWindow which uses malloc, therefore not using a smart pointer.
+        GLFWwindow *window = nullptr;
 };

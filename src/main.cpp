@@ -178,7 +178,7 @@ void networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainL
         std::cout << "Result: " << res << std::endl;
     }
     curl_easy_cleanup(curl);
-
+    
     auto jsonCoinData = nlohmann::json::parse(str_callback); // Check for crash here? Happened once?
 
     if (CryptoCoinsData.size() > 0)
@@ -233,9 +233,9 @@ void networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainL
 int main()
 {
     CustomGLFWWindow customGLFWWindow;
-    GLFWwindow *window = customGLFWWindow.CreateWindow();
+    customGLFWWindow.CreateWindow();
 
-    if (!window)
+    if (!customGLFWWindow.window)
     {
         return 0;
     }
@@ -260,14 +260,14 @@ int main()
 
     ImPlot::CreateContext();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(customGLFWWindow.window, true);
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 
     // test vars
     bool my_tool_active = true;
     int bar_data[11] = {2, 3, 4, 5, 2, 7, 7, 9, 1, 0, 11};
 
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(customGLFWWindow.window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -391,11 +391,11 @@ int main()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(customGLFWWindow.window);
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(customGLFWWindow.window);
     glfwTerminate();
 
     return 0;
