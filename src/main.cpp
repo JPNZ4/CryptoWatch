@@ -136,7 +136,6 @@ void coinHistoryRequest(std::string id, std::string interval, std::string start,
         res = curl_easy_perform(curl);
     }
     curl_easy_cleanup(curl);
-    std::cout << "Result: " << str_callback << std::endl;
     auto jsonCoinData = nlohmann::json::parse(str_callback);
 
     // Check there is an entry with data - which contains the array of coin data
@@ -270,14 +269,18 @@ int main()
         }
 
         {
+            ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
             ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
-            if (ImPlot::BeginPlot("Line Plot", "x", "f(x)")) 
+            if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
             {
-                ImPlot::PlotLine("sin(x)", xAxis.data(), yAxis.data(), 194);
+                ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 ImPlot::EndPlot();
             }
+            ImGui::End();
         }
+
+        
 
         {
             static ImGuiTableFlags flags =
