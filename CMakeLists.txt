@@ -16,6 +16,7 @@ set(JSON_DIR ${LIB_DIR}/nlohmann)
 # Sources + ImGui
 set(SOURCES
     ${SRC_DIR}/main.cpp
+    ${SRC_DIR}/custom_glfw_window.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui.h
     ${IMGUI_DIR}/imconfig.h
