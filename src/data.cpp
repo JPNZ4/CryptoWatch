@@ -57,7 +57,7 @@ std::string Data::CurlRequest(std::string requestString)
     if (curl)
     {
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_easy_setopt(curl, CURLOPT_URL, "api.coincap.io/v2/assets"); // Needs to be char*      
+        curl_easy_setopt(curl, CURLOPT_URL, requestString.c_str()); // Needs to be char*      
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callbackk);
@@ -71,7 +71,6 @@ std::string Data::CurlRequest(std::string requestString)
         throw std::runtime_error(curl_easy_strerror(res));
     }
     curl_easy_cleanup(curl);
-     std::cout << "Result String: " << str_callback << std::endl;
     return str_callback;
 }
 

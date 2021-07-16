@@ -46,13 +46,13 @@ int main()
     std::vector<double> xAxis;
     std::vector<double> yAxis;
 
-    // coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
     std::vector<CoinData> CryptoCoinsData;
     CoinGainLoss coinsGainsAndLosses;
 
     Data data;
     // Start loop to poll for Table CrptoCoin data
     data.timer_start(2000, CryptoCoinsData, coinsGainsAndLosses);
+    data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
 
     // Set the clear color to a nice greeny
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
@@ -80,21 +80,16 @@ int main()
         ImGui::NewFrame();
 
         {
-            // TODO - Delete - For Table reference
-            // ImGui::ShowDemoWindow();
+            ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+            ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
+            if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
+            {
+                ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+                ImPlot::EndPlot();
+            }
+            ImGui::End();
         }
-
-        // {
-        //     ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-        //     ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
-        //     if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
-        //     {
-        //         ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
-        //         ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-        //         ImPlot::EndPlot();
-        //     }
-        //     ImGui::End();
-        // }
 
         {
             ImGui::Begin("Bar Graph Test");
