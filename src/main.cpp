@@ -20,6 +20,7 @@
 #include "data.h"
 
 // For ImGui Tables
+// TODO - Move into ImGui class
 enum CyrpocurrencyColumnID
 {
     ColumnID_ID,
@@ -43,9 +44,11 @@ int main()
         return 0;
     }
 
+    // TODO - Move these into data class
     std::vector<double> xAxis;
     std::vector<double> yAxis;
 
+    // TODO - Move these into Data class
     std::vector<CoinData> CryptoCoinsData;
     CoinGainLoss coinsGainsAndLosses;
 
@@ -57,6 +60,8 @@ int main()
     // Set the clear color to a nice greeny
     glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
     std::string glsl_version = "#version 150";
+
+    // TODO - Move ImGui into own Class
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -128,10 +133,6 @@ int main()
                 // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
                 // This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
                 // Demonstrate using a mixture of flags among available sort-related flags:
-                // - ImGuiTableColumnFlags_DefaultSort
-                // - ImGuiTableColumnFlags_NoSort / ImGuiTableColumnFlags_NoSortAscending / ImGuiTableColumnFlags_NoSortDescending
-                // - ImGuiTableColumnFlags_PreferSortAscending / ImGuiTableColumnFlags_PreferSortDescending
-                // ImGui::TableSetupColumn("Id", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_ID);
                 ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Rank);
                 ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Name);
                 ImGui::TableSetupColumn("Symbol", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Symbol);
@@ -194,6 +195,7 @@ int main()
         glfwPollEvents();
     }
 
+    // TODO - Move into glfwcustomwindow class destrcutor?
     glfwDestroyWindow(customGLFWWindow.window);
     glfwTerminate();
 
