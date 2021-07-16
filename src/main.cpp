@@ -17,6 +17,7 @@
 #include "../lib/nlohmann/json.hpp"
 
 #include "custom_glfw_window.h"
+#include "data.h"
 
 struct CoinData
 {
@@ -247,7 +248,11 @@ int main()
     std::vector<CoinData> CryptoCoinsData;
     CoinGainLoss coinsGainsAndLosses;
     // Start network request in seperate thread to get data
-    timer_start(networkCall, 2000, CryptoCoinsData, coinsGainsAndLosses);
+    // timer_start(networkCall, 2000, CryptoCoinsData, coinsGainsAndLosses);
+
+    Data data;
+    auto test = data.CurlRequest("api.coincap.io/v2/assets");
+
 
 
     // Set the clear color to a nice greeny
