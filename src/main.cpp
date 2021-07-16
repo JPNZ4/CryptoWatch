@@ -1,12 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <functional>
 
-#include <curl/curl.h>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "custom_glfw_window.h"
@@ -36,26 +30,20 @@ int main()
     // Create ImGui object
     ImGuiLayer ImGuiLayer(customGLFWWindow);
 
-    while (!glfwWindowShouldClose(customGLFWWindow.window))
+    while (!customGLFWWindow.WindowShouldClose())
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        customGLFWWindow.ClearWindow();
 
         ImGuiLayer.Start();
-
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
         ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues);
         ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues);        
         ImGuiLayer.CreateTableWidget(CryptoCoinsData);
-
         ImGuiLayer.End();
 
-        glfwSwapBuffers(customGLFWWindow.window);
-        glfwPollEvents();
+        customGLFWWindow.EndOfRunLoopWindowFunctions();
     }
 
-    // TODO - Move into glfwcustomwindow class destrcutor?
-    glfwDestroyWindow(customGLFWWindow.window);
-    glfwTerminate();
-
+    customGLFWWindow.DetachGLFWWindow();
     return 0;
 }

@@ -35,3 +35,25 @@ void CustomGLFWWindow::CreateWindow()
             return;
         }
 }
+
+void CustomGLFWWindow::ClearWindow()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+bool CustomGLFWWindow::WindowShouldClose()
+{
+    return glfwWindowShouldClose(window);
+}
+
+void CustomGLFWWindow::EndOfRunLoopWindowFunctions()
+{
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
+void CustomGLFWWindow::DetachGLFWWindow()
+{
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
