@@ -18,6 +18,7 @@ set(SOURCES
     ${SRC_DIR}/main.cpp
     ${SRC_DIR}/custom_glfw_window.cpp
     ${SRC_DIR}/data.cpp
+    ${SRC_DIR}/imgui_layer.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui.h
     ${IMGUI_DIR}/imconfig.h

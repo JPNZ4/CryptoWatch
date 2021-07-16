@@ -18,6 +18,7 @@
 
 #include "custom_glfw_window.h"
 #include "data.h"
+#include "imgui_layer.h"
 
 // For ImGui Tables
 // TODO - Move into ImGui class
@@ -57,34 +58,17 @@ int main()
     data.timer_start(2000, CryptoCoinsData, coinsGainsAndLosses);
     data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
 
-    // Set the clear color to a nice greeny
-    glClearColor(0.15f, 0.6f, 0.4f, 1.0f);
-    std::string glsl_version = "#version 150";
-
-    // TODO - Move ImGui into own Class
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-
-    ImPlot::CreateContext();
-
-    ImGui_ImplGlfw_InitForOpenGL(customGLFWWindow.window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version.c_str());
-
-    // test vars
-    bool my_tool_active = true;
-    int bar_data[11] = {2, 3, 4, 5, 2, 7, 7, 9, 1, 0, 11};
+    // Create ImGui object
+    ImGuiLayer ImGuiLayer(customGLFWWindow);
 
     while (!glfwWindowShouldClose(customGLFWWindow.window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        ImGuiLayer.Start();
 
         {
+            bool my_tool_active = true;
             ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
             ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
             if (ImPlot::BeginPlot("Coin Value", "Date", "$USD")) 
@@ -187,9 +171,7 @@ int main()
             }
         }
 
-        // rendering
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGuiLayer.End();
 
         glfwSwapBuffers(customGLFWWindow.window);
         glfwPollEvents();
