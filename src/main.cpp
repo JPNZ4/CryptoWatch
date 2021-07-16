@@ -24,10 +24,6 @@ int main()
         return 0;
     }
 
-    // TODO - Move these into data class
-    std::vector<double> xAxis;
-    std::vector<double> yAxis;
-
     // TODO - Move these into Data class
     std::vector<CoinData> CryptoCoinsData;
     CoinGainLoss coinsGainsAndLosses;
@@ -35,7 +31,7 @@ int main()
     Data data;
     // Start loop to poll for Table CrptoCoin data
     data.timer_start(2000, CryptoCoinsData, coinsGainsAndLosses);
-    data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000", xAxis, yAxis); // Example to get single coin history
+    data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000"); // Example to get single coin history
 
     // Create ImGui object
     ImGuiLayer ImGuiLayer(customGLFWWindow);
@@ -46,7 +42,7 @@ int main()
 
         ImGuiLayer.Start();
 
-        ImGuiLayer.CreateLinePlotWidget(xAxis, yAxis);
+        ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
         ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues);
         ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues);        
         ImGuiLayer.CreateTableWidget(CryptoCoinsData);

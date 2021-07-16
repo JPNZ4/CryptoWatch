@@ -74,7 +74,7 @@ std::string Data::CurlRequest(std::string requestString)
     return str_callback;
 }
 
-void Data::coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end, std::vector<double> &xAxis, std::vector<double> &yAxis)
+void Data::coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
 {
     std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
     auto jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
@@ -92,8 +92,8 @@ void Data::coinHistoryRequest(std::string id, std::string interval, std::string 
                 {
                     double price = std::stod(element["priceUsd"].get<std::string>());
                     double time = element["time"].get<double>() / 1000; // Convert to seconds for usage as time in ImPlot
-                    xAxis.push_back(time);
-                    yAxis.push_back(price);
+                    _xAxis.push_back(time);
+                    _yAxis.push_back(price);
                 }
             }
         }

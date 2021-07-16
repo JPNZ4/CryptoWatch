@@ -96,7 +96,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
     }
 }
 
-void ImGuiLayer::CreateLinePlotWidget(std::vector<double> &xAxis, std::vector<double> &yAxis)
+void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis)
 {
     bool my_tool_active = true;
     ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);

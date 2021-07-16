@@ -32,6 +32,6 @@ public:
     void End();
 
     void CreateTableWidget(std::vector<CoinData> &CryptoCoinsData);
-    void CreateLinePlotWidget(std::vector<double> &xAxis, std::vector<double> &yAxis);
+    void CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis);
     void CreateBarGraphWidget(const char* title, const char* labels[5], float values[5]);
 };

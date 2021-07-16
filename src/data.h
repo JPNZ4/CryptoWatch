@@ -35,11 +35,16 @@ class Data
 public:
     Data();
     std::string CurlRequest(std::string requestString);
-    void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end, std::vector<double> &xAxis, std::vector<double> &yAxis);
+    void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end);
     void createBiggestGainsArray(std::vector<CoinData> CryptoCoinsData, CoinGainLoss &coinGainLoss);
     void networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss);
     void timer_start(unsigned int interval, std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss);
+
+    std::vector<double> getXAxis() { return _xAxis; }
+    std::vector<double> getYAxis() { return _yAxis; }
 private:
     bool sortVector(const CoinData& a, const CoinData& b);
     std::string getJSONValueString(nlohmann::json value);
+    std::vector<double> _xAxis;
+    std::vector<double> _yAxis;
 };
