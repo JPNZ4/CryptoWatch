@@ -9,7 +9,7 @@
 
 int main()
 {
-    CustomGLFWWindow customGLFWWindow;
+    CustomGLFWWindow customGLFWWindow(1280, 780);
     customGLFWWindow.CreateWindow();
 
     // Catch error if window fails
@@ -33,7 +33,7 @@ int main()
     while (!customGLFWWindow.WindowShouldClose())
     {
         customGLFWWindow.ClearWindow();
-
+        
         ImGuiLayer.Start();
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
         ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues);
