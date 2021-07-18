@@ -28,10 +28,14 @@ class ImGuiLayer
 public:
     ImGuiLayer(CustomGLFWWindow &customGLFWWindow);
 
-    void Start();
+    void Start(std::pair<int, int> windowDimensions);
     void End();
 
     void CreateTableWidget(std::vector<CoinData> &CryptoCoinsData);
     void CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis);
     void CreateBarGraphWidget(const char* title, const char* labels[5], float values[5]);
+
+private:
+    int _windowWidth;
+    int _windowHeight;
 };

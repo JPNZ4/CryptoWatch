@@ -34,7 +34,7 @@ int main()
     {
         customGLFWWindow.ClearWindow();
         
-        ImGuiLayer.Start();
+        ImGuiLayer.Start(customGLFWWindow.GetWindowDimensions());
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
         ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues);
         ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues);        

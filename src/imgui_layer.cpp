@@ -15,8 +15,10 @@ ImGuiLayer::ImGuiLayer(CustomGLFWWindow &customGLFWWindow)
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 }
 
-void ImGuiLayer::Start()
+void ImGuiLayer::Start(std::pair<int, int> windowDimensions)
 {
+    _windowWidth = windowDimensions.first;
+    _windowHeight = windowDimensions.second;
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
