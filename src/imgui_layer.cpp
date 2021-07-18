@@ -36,8 +36,13 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
     static ImGuiTableFlags flags =
         ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_ScrollY;
     // Using those as a base value to create width/height that are factor of the size of our font
+    static ImGuiWindowFlags parentFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 300));
+    bool *p_open = NULL; // TODO - Make unique pointer
+    ImGui::Begin("Cryptocurrency Statistics", p_open, parentFlags);
     if (ImGui::BeginTable("Cryptocurrency Prices", 8, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
     {
         // Declare columns
@@ -96,6 +101,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
             }
         ImGui::EndTable();
     }
+    ImGui::End();
 }
 
 void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis)
@@ -112,7 +118,7 @@ void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<dou
     ImGui::End();
 }
 
-void ImGuiLayer::CreateBarGraphWidget(const char* title, const char *labels[5], float values[5])
+void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5])
 {
     ImGui::Begin(title);
     // Each Bar is data in array
