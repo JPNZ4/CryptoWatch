@@ -41,6 +41,8 @@ Displays the different widgets using the data from the Data class.
 
 The program should display 4 widgets (table, plot, two bars graphs). The table data should automatically refresh and be sued to sort columns. The user can change which coin is viewed on the plot.
 
+![Screenshot](cryptowatch.png)
+
 # Rubric Points Addressed
 Ensure that the application you build will satisfy all criteria for the “README” and “Compiling and Testing” sections, and that the application will satisfy at least 5 total criteria from the rest of the rubric. Not all rubric items need to be satisfied in order to pass the project. 
 
@@ -55,7 +57,7 @@ Ensure that the application you build will satisfy all criteria for the “READM
 ### Loops, Functions, I/O
 - [x] The project demonstrates an understanding of C++ functions and control structures. (All files in /src)
 - [ ] The project reads data from a file and process the data, or the program writes data to a file. (No file read, but JSON data obtained from API)
-- [x] The project accepts user input and processes the input. (User can interact with widgets - imgui_layer.*)
+- [x] The project accepts user input and processes the input. (User can interact with widgets (sort table, change coin in plot) - imgui_layer.*)
 
 ### Object Oriented Programming
 - [x] The project uses Object Oriented Programming techniques. (All files in /src)
