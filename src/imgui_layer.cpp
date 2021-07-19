@@ -10,9 +10,9 @@ ImGuiLayer::ImGuiLayer(CustomGLFWWindow &customGLFWWindow)
 
     ImPlot::CreateContext();
 
-    std::string glsl_version = "#version 150";
+    std::string glslVersion = "#version 150";
     ImGui_ImplGlfw_InitForOpenGL(customGLFWWindow.window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version.c_str());
+    ImGui_ImplOpenGL3_Init(glslVersion.c_str());
 }
 
 void ImGuiLayer::Start(std::pair<int, int> windowDimensions)
@@ -60,11 +60,11 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
         ImGui::TableHeadersRow();
 
         // Sort our data if sort specs have been changed!
-        if (ImGuiTableSortSpecs *sorts_specs = ImGui::TableGetSortSpecs())
-            if (sorts_specs)
+        if (ImGuiTableSortSpecs *sortSpecs = ImGui::TableGetSortSpecs())
+            if (sortSpecs)
             {
-                int direction = sorts_specs->Specs->SortDirection;
-                int sortColumn = sorts_specs->Specs->ColumnIndex;
+                int direction = sortSpecs->Specs->SortDirection;
+                int sortColumn = sortSpecs->Specs->ColumnIndex;
                 std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this, direction, sortColumn](const CoinData &a, const CoinData &b)
                           {
                               {
@@ -150,10 +150,10 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
         ImGuiListClipper clipper;
         clipper.Begin(CryptoCoinsData.size());
         while (clipper.Step())
-            for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
+            for (int rowN = clipper.DisplayStart; rowN < clipper.DisplayEnd; rowN++)
             {
                 // Display a data item
-                CoinData *item = &CryptoCoinsData[row_n];
+                CoinData *item = &CryptoCoinsData[rowN];
                 ImGui::PushID(std::stoi(item->rank));
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
