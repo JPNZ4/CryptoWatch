@@ -52,9 +52,17 @@ public:
     // Get YAxis data for CoinGainLoss
     std::vector<double> getYAxis() const { return _yAxis; }
     // Get all coin data
-    std::vector<CoinData> GetCoinData() { return _cryptoCoinsData; }
+    std::vector<CoinData> GetCoinData()
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        return _cryptoCoinsData;
+    }
     // Get CoinGainLoss struct
-    CoinGainLoss GetCoinGainLoss() { return _coinsGainsAndLosses; }
+    CoinGainLoss GetCoinGainLoss()
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        return _coinsGainsAndLosses;
+    }
     // Update CryptoCoinData
     void SetCoinData(std::vector<CoinData> cryptoCoinsData);
     // Update CoinGainLoss struct

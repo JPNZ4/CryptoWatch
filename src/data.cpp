@@ -77,8 +77,18 @@ std::string Data::CurlRequest(std::string requestString) const
 void Data::CoinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
 {
     std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
-    auto jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
+    nlohmann::json jsonCoinData;
+    try
+    {
+        jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
+    }
+    catch (...)
+    {
+        std::cout << "JSON parse failed - No update" << std::endl;
+        return;
+    }
 
+    const std::lock_guard<std::mutex> lock(_mutex);
     if (_xAxis.size() > 0 && _yAxis.size() > 0)
     {
         _xAxis.clear();
@@ -122,8 +132,18 @@ void Data::GenerateTopAndLowCoinGains()
 
 void Data::GetAllCoinRequest()
 {
+
     std::string apiResult = CurlRequest("api.coincap.io/v2/assets");
-    auto jsonCoinData = nlohmann::json::parse(apiResult);
+    nlohmann::json jsonCoinData;
+    try
+    {
+        jsonCoinData = nlohmann::json::parse(apiResult);
+    }
+    catch (...)
+    {
+        std::cout << "JSON parse failed - No update" << std::endl;
+        return;
+    }
 
     const std::lock_guard<std::mutex> lock(_mutex);
     if (_cryptoCoinsData.size() > 0)
@@ -175,5 +195,8 @@ std::vector<std::string> Data::GetCoinNamesList() const
     {
         list.push_back(coin.id);
     }
+    // Sort list alphabetically
+    std::sort(list.begin(), list.end(), [](const std::string &a, const std::string &b) -> bool
+              { return a < b; });
     return list;
 }

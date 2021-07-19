@@ -191,24 +191,28 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data) const
             data.CoinHistoryRequest(coinList[0], "d1", "1609459200000", "1626308160000");
         }
         static int item_current_idx = 0;
-        selectedCoin = coinList[item_current_idx].c_str();
-        // Create select list to change which coin is displayed
-        if (ImGui::BeginCombo("Select Coin", selectedCoin))
+        // Ensure list has all elements
+        if (item_current_idx < coinList.size())
         {
-            for (int n = 0; n < coinList.size(); n++)
+            selectedCoin = coinList[item_current_idx].c_str();
+            // Create select list to change which coin is displayed
+            if (ImGui::BeginCombo("Select Coin", selectedCoin))
             {
-                const bool is_selected = (item_current_idx == n);
-                if (ImGui::Selectable(coinList[n].c_str(), is_selected))
+                for (int n = 0; n < coinList.size(); n++)
                 {
-                    item_current_idx = n;
-                    data.CoinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
+                    const bool is_selected = (item_current_idx == n);
+                    if (ImGui::Selectable(coinList[n].c_str(), is_selected))
+                    {
+                        item_current_idx = n;
+                        data.CoinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
+                    }
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
                 }
-                if (is_selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                ImGui::EndCombo();
             }
-            ImGui::EndCombo();
         }
     }
     // Display plot graph
