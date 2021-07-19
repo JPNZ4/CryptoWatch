@@ -41,8 +41,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 300));
-    bool *p_open = NULL; // TODO - Make unique pointer
-    ImGui::Begin("Cryptocurrency Statistics", p_open, parentFlags);
+    ImGui::Begin("Cryptocurrency Statistics", (bool *)__null, parentFlags);
     if (ImGui::BeginTable("Cryptocurrency Prices", 8, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
     {
         // Declare columns
@@ -186,8 +185,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data)
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     ImGui::SetNextWindowPos(ImVec2(0, 300));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
-    bool *p_open = NULL; // TODO - Make unique pointer
-    ImGui::Begin("Coin Plot", p_open, flags);
+    ImGui::Begin("Coin Plot", (bool *)__null, flags);
     const char* selectedCoin = "";
     if (coinList.size() > 0)
     {
@@ -215,7 +213,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data)
             ImGui::EndCombo();
         }
     }
-    
+
     static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time | ImPlotAxisFlags_AutoFit;
     static ImPlotAxisFlags yAxisPlotFlags =  ImPlotAxisFlags_AutoFit;
     if (ImPlot::BeginPlot("Coin Value Since Start of 2021", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags, yAxisPlotFlags))
@@ -232,8 +230,7 @@ void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], 
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     ImGui::SetNextWindowPos(ImVec2(startPos.first * _windowWidth, startPos.second));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * size.first, size.second));
-    bool *p_open = NULL; // TODO - Make unique pointer
-    ImGui::Begin(title, p_open, flags);
+    ImGui::Begin(title, (bool *)__null, flags);
     // Each Bar is data in array
     const double positions[] = {0, 1, 2, 3, 4};
     ImPlot::SetNextPlotTicksX(positions, 5, labels);
