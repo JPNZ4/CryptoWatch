@@ -1,14 +1,12 @@
 #include "data.h"
 
-
-
 Data::Data()
 {
 }
 
-// All responses are string unless they are null, special function to handle the null cases
 std::string Data::GetJSONValueString(nlohmann::json value) const
 {
+    // All responses are string unless they are null, special function to handle the null cases
     if (value.is_null())
     {
         return "";
@@ -21,21 +19,24 @@ std::string Data::GetJSONValueString(nlohmann::json value) const
 
 void Data::PollingNetworkRequestStart(unsigned int interval)
 {
-    std::thread([this, interval]() {
-        while (true)
-        {
-            this->GetAllCoinRequest();
-            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-        }
-    }).detach();
+    std::thread([this, interval]()
+                {
+                    while (true)
+                    {
+                        this->GetAllCoinRequest();
+                        std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+                    }
+                })
+        .detach();
 }
 
-bool Data::SortVector(const CoinData& a, const CoinData& b) const
+bool Data::SortVector(const CoinData &a, const CoinData &b) const
 {
     return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
 }
 
-std::size_t bf_callbackk(char *ptr, size_t size, size_t num, void *userdata)
+// Buffer callback not part of class as I was unable to reference it in the c curl function.
+std::size_t bf_callback(char *ptr, size_t size, size_t num, void *userdata)
 {
     if (auto s = reinterpret_cast<std::string *>(userdata))
     {
@@ -43,8 +44,7 @@ std::size_t bf_callbackk(char *ptr, size_t size, size_t num, void *userdata)
         s->append(ptr, ptr + (size * num));
         return size * num;
     }
-
-    return 0; // indicate error to framework
+    return 0;
 }
 
 std::string Data::CurlRequest(std::string requestString) const
@@ -57,16 +57,16 @@ std::string Data::CurlRequest(std::string requestString) const
     if (curl)
     {
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_easy_setopt(curl, CURLOPT_URL, requestString.c_str()); // Needs to be char*      
+        curl_easy_setopt(curl, CURLOPT_URL, requestString.c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callbackk);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &callbackString);
         struct curl_slist *headers = NULL;
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
     }
-    if(res != CURLE_OK)
+    if (res != CURLE_OK)
     {
         throw std::runtime_error(curl_easy_strerror(res));
     }
@@ -79,7 +79,8 @@ void Data::CoinHistoryRequest(std::string id, std::string interval, std::string 
     std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
     auto jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
 
-    if (_xAxis.size() > 0 && _yAxis.size() > 0) {
+    if (_xAxis.size() > 0 && _yAxis.size() > 0)
+    {
         _xAxis.clear();
         _yAxis.clear();
     }
@@ -108,9 +109,8 @@ void Data::CoinHistoryRequest(std::string id, std::string interval, std::string 
 void Data::GenerateTopAndLowCoinGains()
 {
     auto size = _cryptoCoinsData.size() - 1;
-    std::sort(_cryptoCoinsData.begin(), _cryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
-        return this->SortVector(a, b);
-    });
+    std::sort(_cryptoCoinsData.begin(), _cryptoCoinsData.end(), [this](const CoinData &a, const CoinData &b)
+              { return this->SortVector(a, b); });
     for (int i = 0; i < 5; i++)
     {
         _coinsGainsAndLosses.largestValues[i] = std::stof(_cryptoCoinsData[i].changePercent24Hr);
@@ -171,7 +171,7 @@ void Data::GetAllCoinRequest()
 std::vector<std::string> Data::GetCoinNamesList() const
 {
     std::vector<std::string> list;
-    for (CoinData coin : _cryptoCoinsData) 
+    for (CoinData coin : _cryptoCoinsData)
     {
         list.push_back(coin.id);
     }

@@ -1,12 +1,14 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "../lib/imgui/imgui.h"
 #include "../lib/imgui/imgui_impl_glfw.h"
 #include "../lib/imgui/imgui_impl_opengl3.h"
 #include "../lib/imgui/implot.h"
+
 #include "data.h"
-#include <string>
-#include <vector>
 
 enum CyrpocurrencyColumnID
 {
