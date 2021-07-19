@@ -7,7 +7,7 @@ Data::Data()
 }
 
 // All responses are string unless they are null, special function to handle the null cases
-std::string Data::GetJSONValueString(nlohmann::json value)
+std::string Data::GetJSONValueString(nlohmann::json value) const
 {
     if (value.is_null())
     {
@@ -30,7 +30,7 @@ void Data::PollingNetworkRequestStart(unsigned int interval)
     }).detach();
 }
 
-bool Data::SortVector(const CoinData& a, const CoinData& b)
+bool Data::SortVector(const CoinData& a, const CoinData& b) const
 {
     return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
 }
@@ -47,7 +47,7 @@ std::size_t bf_callbackk(char *ptr, size_t size, size_t num, void *userdata)
     return 0; // indicate error to framework
 }
 
-std::string Data::CurlRequest(std::string requestString)
+std::string Data::CurlRequest(std::string requestString) const
 {
     CURL *curl;
     CURLcode res;
@@ -168,7 +168,7 @@ void Data::GetAllCoinRequest()
     }
 }
 
-std::vector<std::string> Data::GetCoinNamesList()
+std::vector<std::string> Data::GetCoinNamesList() const
 {
     std::vector<std::string> list;
     for (CoinData coin : _cryptoCoinsData) 

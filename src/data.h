@@ -36,22 +36,22 @@ class Data
 {
 public:
     Data();
-    std::string CurlRequest(std::string requestString);
+    std::string CurlRequest(std::string requestString) const;
     void CoinHistoryRequest(std::string id, std::string interval, std::string start, std::string end);
     void GenerateTopAndLowCoinGains();
     void GetAllCoinRequest();
     void PollingNetworkRequestStart(unsigned int interval);
 
-    std::vector<double> getXAxis() { return _xAxis; }
-    std::vector<double> getYAxis() { return _yAxis; }
+    std::vector<double> getXAxis() const { return _xAxis; }
+    std::vector<double> getYAxis() const { return _yAxis; }
     std::vector<CoinData> GetCoinData() { return _cryptoCoinsData; }
     CoinGainLoss GetCoinGainLoss() { return _coinsGainsAndLosses; }
     void SetCoinData(std::vector<CoinData> cryptoCoinsData);
     void SetCoinGainLoss(CoinGainLoss coinsGainsAndLosses);
-    std::vector<std::string> GetCoinNamesList();
+    std::vector<std::string> GetCoinNamesList() const;
 private:
-    bool SortVector(const CoinData &a, const CoinData &b);
-    std::string GetJSONValueString(nlohmann::json value);
+    bool SortVector(const CoinData &a, const CoinData &b) const;
+    std::string GetJSONValueString(nlohmann::json value) const;
     std::vector<double> _xAxis;
     std::vector<double> _yAxis;
     std::mutex _mutex;

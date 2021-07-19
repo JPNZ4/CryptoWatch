@@ -24,13 +24,13 @@ void ImGuiLayer::Start(std::pair<int, int> windowDimensions)
     ImGui::NewFrame();
 }
 
-void ImGuiLayer::End()
+void ImGuiLayer::End() const
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
+void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData) const
 {
 
     static ImGuiTableFlags flags =
@@ -179,7 +179,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
     ImGui::End();
 }
 
-void ImGuiLayer::CreateLinePlotWidget(Data &data)
+void ImGuiLayer::CreateLinePlotWidget(Data &data) const
 {
     std::vector<std::string> coinList = data.GetCoinNamesList();
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
@@ -225,7 +225,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data)
     ImGui::End();
 }
 
-void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size)
+void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size) const
 {
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     ImGui::SetNextWindowPos(ImVec2(startPos.first * _windowWidth, startPos.second));

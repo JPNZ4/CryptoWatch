@@ -36,7 +36,7 @@ void CustomGLFWWindow::CreateWindow()
     }
 }
 
-void CustomGLFWWindow::ClearWindow()
+void CustomGLFWWindow::ClearWindow() const
 {
     glClear(GL_COLOR_BUFFER_BIT);
 }

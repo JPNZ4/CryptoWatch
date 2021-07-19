@@ -29,11 +29,11 @@ public:
     ImGuiLayer(CustomGLFWWindow &customGLFWWindow);
 
     void Start(std::pair<int, int> windowDimensions);
-    void End();
+    void End() const;
 
-    void CreateTableWidget(std::vector<CoinData> CryptoCoinsData);
-    void CreateLinePlotWidget(Data &data);
-    void CreateBarGraphWidget(const char* title, const char* labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size);
+    void CreateTableWidget(std::vector<CoinData> CryptoCoinsData) const;
+    void CreateLinePlotWidget(Data &data) const;
+    void CreateBarGraphWidget(const char* title, const char* labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size) const;
 
 private:
     int _windowWidth;
