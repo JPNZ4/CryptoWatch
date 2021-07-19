@@ -129,9 +129,10 @@ void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], 
     bool *p_open = NULL; // TODO - Make unique pointer
     ImGui::Begin(title, p_open, flags);
     // Each Bar is data in array
-    const double positions[] = {1, 2, 3, 4, 5};
+    const double positions[] = {0, 1, 2, 3, 4};
     ImPlot::SetNextPlotTicksX(positions, 5, labels);
-    if (ImPlot::BeginPlot(title))
+    static ImPlotFlags plotFlags = ImPlotFlags_NoLegend;
+    if (ImPlot::BeginPlot(title ,(const char *)__null, (const char *)__null, ImVec2(-1, 0), plotFlags, ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit))
     {
         ImPlot::PlotBars(title, values, 5);
         ImPlot::EndPlot();
