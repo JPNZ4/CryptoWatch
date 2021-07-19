@@ -184,7 +184,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data) const
     std::vector<std::string> coinList = data.GetCoinNamesList();
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     ImGui::SetNextWindowPos(ImVec2(0, 300));
-    ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
+    ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 340));
     ImGui::Begin("Coin Plot", (bool *)__null, flags);
     const char* selectedCoin = "";
     if (coinList.size() > 0)

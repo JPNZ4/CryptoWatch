@@ -9,7 +9,7 @@
 
 int main()
 {
-    CustomGLFWWindow customGLFWWindow(1280, 620);
+    CustomGLFWWindow customGLFWWindow(1280, 640);
     customGLFWWindow.CreateWindow();
 
     // Catch error if window fails
@@ -33,7 +33,7 @@ int main()
         ImGuiLayer.CreateTableWidget(data.GetCoinData());
         ImGuiLayer.CreateLinePlotWidget(data);
         ImGuiLayer.CreateBarGraphWidget("Biggest Gains (24hrs)", data.GetCoinGainLoss().largestLabels, data.GetCoinGainLoss().largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
-        ImGuiLayer.CreateBarGraphWidget("Biggest Losses (24hrs)", data.GetCoinGainLoss().smallestLabels, data.GetCoinGainLoss().smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
+        ImGuiLayer.CreateBarGraphWidget("Biggest Losses (24hrs)", data.GetCoinGainLoss().smallestLabels, data.GetCoinGainLoss().smallestValues, std::pair<float, float>(0.6666, 320), std::pair<float, float>(0.3333, 320));        
         ImGuiLayer.End();
 
         customGLFWWindow.EndOfRunLoopWindowFunctions();
