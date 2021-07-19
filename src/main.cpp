@@ -20,7 +20,7 @@ int main()
 
     Data data;
     // Start loop to poll for Table CrptoCoin data
-    data.timer_start(5000);
+    data.PollingNetworkRequestStart(5000);
 
     // Create ImGui object
     ImGuiLayer ImGuiLayer(customGLFWWindow);

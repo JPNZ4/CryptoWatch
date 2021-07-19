@@ -29,7 +29,6 @@ struct CoinGainLoss
     const char *largestLabels[5] = {"", "", "", "", ""};
     float largestValues[5] = {0, 0, 0, 0, 0};
     const char *smallestLabels[5] = {"", "", "", "", ""};
-    ;
     float smallestValues[5] = {0, 0, 0, 0, 0};
 };
 
@@ -38,10 +37,10 @@ class Data
 public:
     Data();
     std::string CurlRequest(std::string requestString);
-    void coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end);
-    void createBiggestGainsArray();
-    void networkCall();
-    void timer_start(unsigned int interval);
+    void CoinHistoryRequest(std::string id, std::string interval, std::string start, std::string end);
+    void GenerateTopAndLowCoinGains();
+    void GetAllCoinRequest();
+    void PollingNetworkRequestStart(unsigned int interval);
 
     std::vector<double> getXAxis() { return _xAxis; }
     std::vector<double> getYAxis() { return _yAxis; }
@@ -51,8 +50,8 @@ public:
     void SetCoinGainLoss(CoinGainLoss coinsGainsAndLosses);
     std::vector<std::string> GetCoinNamesList();
 private:
-    bool sortVector(const CoinData &a, const CoinData &b);
-    std::string getJSONValueString(nlohmann::json value);
+    bool SortVector(const CoinData &a, const CoinData &b);
+    std::string GetJSONValueString(nlohmann::json value);
     std::vector<double> _xAxis;
     std::vector<double> _yAxis;
     std::mutex _mutex;

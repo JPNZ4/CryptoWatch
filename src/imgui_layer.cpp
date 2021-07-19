@@ -191,7 +191,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data)
     {
         if (data.getXAxis().size() == 0) {
             // List generated - Generate list from first coin in lsit
-            data.coinHistoryRequest(coinList[0], "d1", "1609459200000", "1626308160000");
+            data.CoinHistoryRequest(coinList[0], "d1", "1609459200000", "1626308160000");
         }
         static int item_current_idx = 0;                              // Here we store our selection data as an index.
         selectedCoin = coinList[item_current_idx].c_str(); // Label to preview before opening the combo (technically it could be anything)
@@ -203,7 +203,7 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data)
                 if (ImGui::Selectable(coinList[n].c_str(), is_selected))
                 {
                     item_current_idx = n;
-                    data.coinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
+                    data.CoinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
                 }
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)

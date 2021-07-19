@@ -7,7 +7,7 @@ Data::Data()
 }
 
 // All responses are string unless they are null, special function to handle the null cases
-std::string Data::getJSONValueString(nlohmann::json value)
+std::string Data::GetJSONValueString(nlohmann::json value)
 {
     if (value.is_null())
     {
@@ -19,18 +19,18 @@ std::string Data::getJSONValueString(nlohmann::json value)
     }
 }
 
-void Data::timer_start(unsigned int interval)
+void Data::PollingNetworkRequestStart(unsigned int interval)
 {
     std::thread([this, interval]() {
         while (true)
         {
-            this->networkCall();
+            this->GetAllCoinRequest();
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
         }
     }).detach();
 }
 
-bool Data::sortVector(const CoinData& a, const CoinData& b)
+bool Data::SortVector(const CoinData& a, const CoinData& b)
 {
     return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
 }
@@ -53,7 +53,7 @@ std::string Data::CurlRequest(std::string requestString)
     CURLcode res;
 
     curl = curl_easy_init();
-    std::string str_callback;
+    std::string callbackString;
     if (curl)
     {
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
@@ -61,7 +61,7 @@ std::string Data::CurlRequest(std::string requestString)
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &bf_callbackk);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &callbackString);
         struct curl_slist *headers = NULL;
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
@@ -71,10 +71,10 @@ std::string Data::CurlRequest(std::string requestString)
         throw std::runtime_error(curl_easy_strerror(res));
     }
     curl_easy_cleanup(curl);
-    return str_callback;
+    return callbackString;
 }
 
-void Data::coinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
+void Data::CoinHistoryRequest(std::string id, std::string interval, std::string start, std::string end)
 {
     std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
     auto jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
@@ -105,11 +105,11 @@ void Data::coinHistoryRequest(std::string id, std::string interval, std::string 
     }
 }
 
-void Data::createBiggestGainsArray()
+void Data::GenerateTopAndLowCoinGains()
 {
     auto size = _cryptoCoinsData.size() - 1;
     std::sort(_cryptoCoinsData.begin(), _cryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
-        return this->sortVector(a, b);
+        return this->SortVector(a, b);
     });
     for (int i = 0; i < 5; i++)
     {
@@ -120,7 +120,7 @@ void Data::createBiggestGainsArray()
     }
 }
 
-void Data::networkCall()
+void Data::GetAllCoinRequest()
 {
     std::string apiResult = CurlRequest("api.coincap.io/v2/assets");
     auto jsonCoinData = nlohmann::json::parse(apiResult);
@@ -144,17 +144,17 @@ void Data::networkCall()
                 {
                     // Convert JSON Object into CoinData struct
                     CoinData coin{
-                        getJSONValueString(element["id"]),
-                        getJSONValueString(element["rank"]),
-                        getJSONValueString(element["symbol"]),
-                        getJSONValueString(element["name"]),
-                        getJSONValueString(element["supply"]),
-                        getJSONValueString(element["maxSupply"]),
-                        getJSONValueString(element["marketCapUsd"]),
-                        getJSONValueString(element["volumeUsd24Hr"]),
-                        getJSONValueString(element["priceUsd"]),
-                        getJSONValueString(element["changePercent24Hr"]),
-                        getJSONValueString(element["vwap24Hr"]),
+                        GetJSONValueString(element["id"]),
+                        GetJSONValueString(element["rank"]),
+                        GetJSONValueString(element["symbol"]),
+                        GetJSONValueString(element["name"]),
+                        GetJSONValueString(element["supply"]),
+                        GetJSONValueString(element["maxSupply"]),
+                        GetJSONValueString(element["marketCapUsd"]),
+                        GetJSONValueString(element["volumeUsd24Hr"]),
+                        GetJSONValueString(element["priceUsd"]),
+                        GetJSONValueString(element["changePercent24Hr"]),
+                        GetJSONValueString(element["vwap24Hr"]),
                     };
                     // Push CoinData struct to array
                     _cryptoCoinsData.push_back(coin);
@@ -164,7 +164,7 @@ void Data::networkCall()
     }
     if (_cryptoCoinsData.size() > 0)
     {
-        createBiggestGainsArray();
+        GenerateTopAndLowCoinGains();
     }
 }
 
