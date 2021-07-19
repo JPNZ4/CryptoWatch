@@ -50,7 +50,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
         // This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
         // Demonstrate using a mixture of flags among available sort-related flags:
         ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Rank);
-        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Name);
+        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Name);
         ImGui::TableSetupColumn("Symbol", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Symbol);
         ImGui::TableSetupColumn("Price", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_PriceUsd);
         ImGui::TableSetupColumn("24Hr %", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_ChangePercent24Hr);
@@ -61,15 +61,91 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
         ImGui::TableHeadersRow();
 
         // Sort our data if sort specs have been changed!
-        // if (ImGuiTableSortSpecs* sorts_specs = ImGui::TableGetSortSpecs())
-        // if (sorts_specs->SpecsDirty)
-        // {
-        //     MyItem::s_current_sort_specs = sorts_specs; // Store in variable accessible by the sort function.
-        //     if (items.Size > 1)
-        //         qsort(&items[0], (size_t)items.Size, sizeof(items[0]), MyItem::CompareWithSortSpecs);
-        //     MyItem::s_current_sort_specs = NULL;
-        //     sorts_specs->SpecsDirty = false;
-        // }
+        if (ImGuiTableSortSpecs *sorts_specs = ImGui::TableGetSortSpecs())
+            if (sorts_specs)
+            {
+                int direction = sorts_specs->Specs->SortDirection;
+                int sortColumn = sorts_specs->Specs->ColumnIndex;
+                std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this, direction, sortColumn](const CoinData &a, const CoinData &b)
+                          {
+                              {
+                                  switch (sortColumn)
+                                  {
+                                  case 0:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.rank) < std::stod(b.rank);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.rank) > std::stod(b.rank);
+                                      }
+                                      break;
+                                  case 3:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.priceUsd) < std::stod(b.priceUsd);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.priceUsd) > std::stod(b.priceUsd);
+                                      }
+                                      break;
+                                  case 4:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.changePercent24Hr) < std::stod(b.changePercent24Hr);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.changePercent24Hr) > std::stod(b.changePercent24Hr);
+                                      }
+                                      break;
+                                  case 5:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.supply) < std::stod(b.supply);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.supply) > std::stod(b.supply);
+                                      }
+                                      break;
+                                  case 6:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.volumeUsd24Hr) < std::stod(b.volumeUsd24Hr);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.volumeUsd24Hr) > std::stod(b.volumeUsd24Hr);
+                                      }
+                                      break;
+                                  case 7:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.marketCapUsd) < std::stod(b.marketCapUsd);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.marketCapUsd) > std::stod(b.marketCapUsd);
+                                      }
+                                      break;
+
+                                  default:
+                                      if (direction == 1)
+                                      {
+                                          return std::stod(a.rank) < std::stod(b.rank);
+                                      }
+                                      else
+                                      {
+                                          return std::stod(a.rank) > std::stod(b.rank);
+                                      }
+                                      break;
+                                  }
+                              }
+                          });
+            }
 
         // Demonstrate using clipper for large vertical lists
         ImGuiListClipper clipper;
@@ -111,7 +187,7 @@ void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<dou
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
     bool *p_open = NULL; // TODO - Make unique pointer
     ImGui::Begin("My First Tool", p_open, flags);
-    static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time; 
+    static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time;
     if (ImPlot::BeginPlot("Coin Value", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags))
     {
         ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
@@ -132,7 +208,7 @@ void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], 
     const double positions[] = {0, 1, 2, 3, 4};
     ImPlot::SetNextPlotTicksX(positions, 5, labels);
     static ImPlotFlags plotFlags = ImPlotFlags_NoLegend;
-    if (ImPlot::BeginPlot(title ,(const char *)__null, (const char *)__null, ImVec2(-1, 0), plotFlags, ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit))
+    if (ImPlot::BeginPlot(title, (const char *)__null, (const char *)__null, ImVec2(-1, 0), plotFlags, ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit))
     {
         ImPlot::PlotBars(title, values, 5);
         ImPlot::EndPlot();
