@@ -36,8 +36,8 @@ int main()
         
         ImGuiLayer.Start(customGLFWWindow.GetWindowDimensions());
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
-        ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
-        ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
+        ImGuiLayer.CreateBarGraphWidget("Biggest Gains (24hrs)", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
+        ImGuiLayer.CreateBarGraphWidget("Biggest Losses (24hrs)", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
         ImGuiLayer.CreateTableWidget(CryptoCoinsData);
         ImGuiLayer.End();
 
