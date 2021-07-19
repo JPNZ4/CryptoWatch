@@ -30,11 +30,11 @@ The widgets will scale in width with the application but no in height.
 
 There are three classes in addition to the main file
 
-## CustomGLFWWindow
+### CustomGLFWWindow
 Handles the creation of the window and the OpenGL context that is used for the application.
-## Data
+### Data
 The data class handles requesting data from the coincap API and formatting it for use.
-## ImGuiLayer
+### ImGuiLayer
 Displays the different widgets using the data from the Data class.
 
 # Expected Output
@@ -42,4 +42,42 @@ Displays the different widgets using the data from the Data class.
 The program should display 4 widgets (table, plot, two bars graphs). The table data should automatically refresh and be sued to sort columns. The user can change which coin is viewed on the plot.
 
 # Rubric Points Addressed
+
+### README (All Rubric Points REQUIRED)
+- [x] A README with instructions is included with the project.
+- [x] The README indicates which project is chosen.
+- [x] The README includes information about each rubric point addressed.
+
+### Compiling and Testing (All Rubric Points REQUIRED)
+- [x] The submission must compile and run.
+
+### Loops, Functions, I/O
+- [x] The project demonstrates an understanding of C++ functions and control structures.
+- [x] The project reads data from a file and process the data, or the program writes data to a file.
+- [x] The project accepts user input and processes the input.
+
+### Object Oriented Programming
+- [x] The project uses Object Oriented Programming techniques.
+- [x] Classes use appropriate access specifiers for class members.
+- [x] Class constructors utilize member initialization lists.
+- [x] Classes abstract implementation details from their interfaces.
+- [x] Classes encapsulate behavior.
+- [x] Classes follow an appropriate inheritance hierarchy.
+- [ ] Overloaded functions allow the same function to operate on different parameters.
+- [ ] Derived class functions override virtual base class functions.
+- [ ] Templates generalize functions in the project.
+
+### Memory Management
+- [x] The project makes use of references in function declarations.
+- [x] The project uses destructors appropriately.
+- [x] The project uses scope / Resource Acquisition Is Initialization (RAII) where appropriate.
+- [ ] The project follows the Rule of 5.
+- [ ] The project uses move semantics to move data, instead of copying it, where possible.
+- [ ] The project uses smart pointers instead of raw pointers.
+
+### Concurrency
+- [x] The project uses multithreading.
+- [ ] A promise and future is used in the project.
+- [x] A mutex or lock is used in the project.
+- [ ] A condition variable is used in the project.
 
