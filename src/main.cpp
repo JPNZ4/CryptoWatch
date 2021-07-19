@@ -20,7 +20,7 @@ int main()
 
     Data data;
     // Start loop to poll for Table CrptoCoin data
-    data.timer_start(2000);
+    data.timer_start(5000);
     data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000"); // Example to get single coin history
 
     // Create ImGui object
