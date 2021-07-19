@@ -33,21 +33,16 @@ void ImGuiLayer::End() const
 void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData) const
 {
 
+    static ImGuiWindowFlags parentFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
     static ImGuiTableFlags flags =
         ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_ScrollY;
-    // Using those as a base value to create width/height that are factor of the size of our font
-    static ImGuiWindowFlags parentFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
-    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    // Set position and size of window
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 300));
     ImGui::Begin("Cryptocurrency Statistics", (bool *)__null, parentFlags);
     if (ImGui::BeginTable("Cryptocurrency Prices", 8, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
     {
-        // Declare columns
-        // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
-        // This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
-        // Demonstrate using a mixture of flags among available sort-related flags:
         ImGui::TableSetupColumn("Rank", ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Rank);
         ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthStretch, 0.0f, ColumnID_Name);
         ImGui::TableSetupColumn("Symbol", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ColumnID_Symbol);
@@ -59,7 +54,7 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData) const
         ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
         ImGui::TableHeadersRow();
 
-        // Sort our data if sort specs have been changed!
+        // Sort our data
         if (ImGuiTableSortSpecs *sortSpecs = ImGui::TableGetSortSpecs())
             if (sortSpecs)
             {
@@ -146,32 +141,32 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData) const
                           });
             }
 
-        // Demonstrate using clipper for large vertical lists
+        // Add clipper for list
         ImGuiListClipper clipper;
         clipper.Begin(CryptoCoinsData.size());
         while (clipper.Step())
             for (int rowN = clipper.DisplayStart; rowN < clipper.DisplayEnd; rowN++)
             {
-                // Display a data item
-                CoinData *item = &CryptoCoinsData[rowN];
-                ImGui::PushID(std::stoi(item->rank));
+                // Display CoinData
+                CoinData *coin = &CryptoCoinsData[rowN];
+                ImGui::PushID(std::stoi(coin->rank));
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::Text(item->rank.c_str());
+                ImGui::Text(coin->rank.c_str());
                 ImGui::TableNextColumn();
-                ImGui::TextUnformatted(item->name.c_str());
+                ImGui::TextUnformatted(coin->name.c_str());
                 ImGui::TableNextColumn();
-                ImGui::Text(item->symbol.c_str());
+                ImGui::Text(coin->symbol.c_str());
                 ImGui::TableNextColumn();
-                ImGui::Text(std::stof(item->priceUsd) < 10 ? "%.7f" : "%.2f", std::stof(item->priceUsd));
+                ImGui::Text(std::stof(coin->priceUsd) < 10 ? "%.7f" : "%.2f", std::stof(coin->priceUsd));
                 ImGui::TableNextColumn();
-                ImGui::Text("%.5f", std::stof(item->changePercent24Hr));
+                ImGui::Text("%.5f", std::stof(coin->changePercent24Hr));
                 ImGui::TableNextColumn();
-                ImGui::Text("%.0f", std::stof(item->supply));
+                ImGui::Text("%.0f", std::stof(coin->supply));
                 ImGui::TableNextColumn();
-                ImGui::Text("%.0f", std::stof(item->volumeUsd24Hr));
+                ImGui::Text("%.0f", std::stof(coin->volumeUsd24Hr));
                 ImGui::TableNextColumn();
-                ImGui::Text("%.0f", std::stof(item->marketCapUsd));
+                ImGui::Text("%.0f", std::stof(coin->marketCapUsd));
                 ImGui::PopID();
             }
         ImGui::EndTable();
@@ -183,18 +178,21 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data) const
 {
     std::vector<std::string> coinList = data.GetCoinNamesList();
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+    // Set window size and position
     ImGui::SetNextWindowPos(ImVec2(0, 300));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 340));
     ImGui::Begin("Coin Plot", (bool *)__null, flags);
-    const char* selectedCoin = "";
+    const char *selectedCoin = "";
     if (coinList.size() > 0)
     {
-        if (data.getXAxis().size() == 0) {
+        if (data.getXAxis().size() == 0)
+        {
             // List generated - Generate list from first coin in lsit
             data.CoinHistoryRequest(coinList[0], "d1", "1609459200000", "1626308160000");
         }
-        static int item_current_idx = 0;                              // Here we store our selection data as an index.
-        selectedCoin = coinList[item_current_idx].c_str(); // Label to preview before opening the combo (technically it could be anything)
+        static int item_current_idx = 0;
+        selectedCoin = coinList[item_current_idx].c_str();
+        // Create select list to change which coin is displayed
         if (ImGui::BeginCombo("Select Coin", selectedCoin))
         {
             for (int n = 0; n < coinList.size(); n++)
@@ -205,17 +203,17 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data) const
                     item_current_idx = n;
                     data.CoinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
                 }
-
-                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
+                {
                     ImGui::SetItemDefaultFocus();
+                }
             }
             ImGui::EndCombo();
         }
     }
-
+    // Display plot graph
     static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time | ImPlotAxisFlags_AutoFit;
-    static ImPlotAxisFlags yAxisPlotFlags =  ImPlotAxisFlags_AutoFit;
+    static ImPlotAxisFlags yAxisPlotFlags = ImPlotAxisFlags_AutoFit;
     if (ImPlot::BeginPlot("Coin Value Since Start of 2021", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags, yAxisPlotFlags))
     {
         ImPlot::PlotLine(selectedCoin, data.getXAxis().data(), data.getYAxis().data(), data.getXAxis().size());
@@ -228,10 +226,10 @@ void ImGuiLayer::CreateLinePlotWidget(Data &data) const
 void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size) const
 {
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+    // Set widget location and size
     ImGui::SetNextWindowPos(ImVec2(startPos.first * _windowWidth, startPos.second));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * size.first, size.second));
     ImGui::Begin(title, (bool *)__null, flags);
-    // Each Bar is data in array
     const double positions[] = {0, 1, 2, 3, 4};
     ImPlot::SetNextPlotTicksX(positions, 5, labels);
     static ImPlotFlags plotFlags = ImPlotFlags_NoLegend;
