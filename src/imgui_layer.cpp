@@ -106,9 +106,11 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
 
 void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis)
 {
-    bool my_tool_active = true;
-    ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-    ImGui::BulletText("Anti-aliasing can be enabled from the plot's context menu (see Help).");
+    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+    ImGui::SetNextWindowPos(ImVec2(0, 300));
+    ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
+    bool *p_open = NULL; // TODO - Make unique pointer
+    ImGui::Begin("My First Tool", p_open, flags);
     if (ImPlot::BeginPlot("Coin Value", "Date", "$USD"))
     {
         ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
@@ -118,9 +120,13 @@ void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<dou
     ImGui::End();
 }
 
-void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5])
+void ImGuiLayer::CreateBarGraphWidget(const char *title, const char *labels[5], float values[5], std::pair<float, float> startPos, std::pair<float, float> size)
 {
-    ImGui::Begin(title);
+    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+    ImGui::SetNextWindowPos(ImVec2(startPos.first * _windowWidth, startPos.second));
+    ImGui::SetNextWindowSize(ImVec2(_windowWidth * size.first, size.second));
+    bool *p_open = NULL; // TODO - Make unique pointer
+    ImGui::Begin(title, p_open, flags);
     // Each Bar is data in array
     const double positions[] = {1, 2, 3, 4, 5};
     ImPlot::SetNextPlotTicksX(positions, 5, labels);

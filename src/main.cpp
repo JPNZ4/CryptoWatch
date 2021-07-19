@@ -9,7 +9,7 @@
 
 int main()
 {
-    CustomGLFWWindow customGLFWWindow(1280, 780);
+    CustomGLFWWindow customGLFWWindow(1280, 620);
     customGLFWWindow.CreateWindow();
 
     // Catch error if window fails
@@ -36,8 +36,8 @@ int main()
         
         ImGuiLayer.Start(customGLFWWindow.GetWindowDimensions());
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
-        ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues);
-        ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues);        
+        ImGuiLayer.CreateBarGraphWidget("Biggest Gains", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
+        ImGuiLayer.CreateBarGraphWidget("Biggest Losses", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
         ImGuiLayer.CreateTableWidget(CryptoCoinsData);
         ImGuiLayer.End();
 
