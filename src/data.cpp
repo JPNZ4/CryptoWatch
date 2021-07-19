@@ -123,7 +123,7 @@ void Data::createBiggestGainsArray()
 void Data::networkCall()
 {
     std::string apiResult = CurlRequest("api.coincap.io/v2/assets");
-    auto jsonCoinData = nlohmann::json::parse(apiResult); // TODO - Check for crash here? Happened once?
+    auto jsonCoinData = nlohmann::json::parse(apiResult);
 
     const std::lock_guard<std::mutex> lock(_mutex);
     if (_cryptoCoinsData.size() > 0)
