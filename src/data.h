@@ -49,7 +49,7 @@ public:
     CoinGainLoss GetCoinGainLoss() { return _coinsGainsAndLosses; }
     void SetCoinData(std::vector<CoinData> cryptoCoinsData);
     void SetCoinGainLoss(CoinGainLoss coinsGainsAndLosses);
-
+    std::vector<std::string> GetCoinNamesList();
 private:
     bool sortVector(const CoinData &a, const CoinData &b);
     std::string getJSONValueString(nlohmann::json value);

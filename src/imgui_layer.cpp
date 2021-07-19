@@ -180,17 +180,47 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
     ImGui::End();
 }
 
-void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<double> yAxis)
+void ImGuiLayer::CreateLinePlotWidget(Data &data)
 {
+    std::vector<std::string> coinList = data.GetCoinNamesList();
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     ImGui::SetNextWindowPos(ImVec2(0, 300));
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
     bool *p_open = NULL; // TODO - Make unique pointer
     ImGui::Begin("Coin Plot", p_open, flags);
-    static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time;
-    if (ImPlot::BeginPlot("Coin Value", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags))
+    const char* selectedCoin = "";
+    if (coinList.size() > 0)
     {
-        ImPlot::PlotLine("Bitcon", xAxis.data(), yAxis.data(), 194);
+        if (data.getXAxis().size() == 0) {
+            // List generated - Generate list from first coin in lsit
+            data.coinHistoryRequest(coinList[0], "d1", "1609459200000", "1626308160000");
+        }
+        static int item_current_idx = 0;                              // Here we store our selection data as an index.
+        selectedCoin = coinList[item_current_idx].c_str(); // Label to preview before opening the combo (technically it could be anything)
+        if (ImGui::BeginCombo("Select Coin", selectedCoin))
+        {
+            for (int n = 0; n < coinList.size(); n++)
+            {
+                const bool is_selected = (item_current_idx == n);
+                if (ImGui::Selectable(coinList[n].c_str(), is_selected))
+                {
+                    item_current_idx = n;
+                    data.coinHistoryRequest(coinList[item_current_idx], "d1", "1609459200000", "1626308160000");
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+    }
+    
+    static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time | ImPlotAxisFlags_AutoFit;
+    static ImPlotAxisFlags yAxisPlotFlags =  ImPlotAxisFlags_AutoFit;
+    if (ImPlot::BeginPlot("Coin Value Since Start of 2021", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags, yAxisPlotFlags))
+    {
+        ImPlot::PlotLine(selectedCoin, data.getXAxis().data(), data.getYAxis().data(), data.getXAxis().size());
         ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
         ImPlot::EndPlot();
     }

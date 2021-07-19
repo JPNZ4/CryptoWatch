@@ -79,6 +79,11 @@ void Data::coinHistoryRequest(std::string id, std::string interval, std::string 
     std::string requestString = "api.coincap.io/v2/assets/" + id + "/history?interval=" + interval + "&start=" + start + "&end=" + end;
     auto jsonCoinData = nlohmann::json::parse(CurlRequest(requestString));
 
+    if (_xAxis.size() > 0 && _yAxis.size() > 0) {
+        _xAxis.clear();
+        _yAxis.clear();
+    }
+
     // Check there is an entry with data - which contains the array of coin data
     if (jsonCoinData.find("data") != jsonCoinData.end())
     {
@@ -103,7 +108,6 @@ void Data::coinHistoryRequest(std::string id, std::string interval, std::string 
 void Data::createBiggestGainsArray()
 {
     auto size = _cryptoCoinsData.size() - 1;
-    // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), Data::sortVector);
     std::sort(_cryptoCoinsData.begin(), _cryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
         return this->sortVector(a, b);
     });
@@ -158,12 +162,18 @@ void Data::networkCall()
             }
         }
     }
-    // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), &Data::sortVector);
-    // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
-    //     return this->sortVector(a, b);
-    // });
     if (_cryptoCoinsData.size() > 0)
     {
         createBiggestGainsArray();
     }
+}
+
+std::vector<std::string> Data::GetCoinNamesList()
+{
+    std::vector<std::string> list;
+    for (CoinData coin : _cryptoCoinsData) 
+    {
+        list.push_back(coin.id);
+    }
+    return list;
 }
