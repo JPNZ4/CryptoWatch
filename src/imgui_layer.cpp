@@ -88,15 +88,15 @@ void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
                 ImGui::TableNextColumn();
                 ImGui::Text(item->symbol.c_str());
                 ImGui::TableNextColumn();
-                ImGui::Text(item->priceUsd.c_str());
+                ImGui::Text(std::stof(item->priceUsd) < 10 ? "%.7f" : "%.2f", std::stof(item->priceUsd));
                 ImGui::TableNextColumn();
-                ImGui::Text(item->changePercent24Hr.c_str());
+                ImGui::Text("%.5f", std::stof(item->changePercent24Hr));
                 ImGui::TableNextColumn();
-                ImGui::Text(item->supply.c_str());
+                ImGui::Text("%.0f", std::stof(item->supply));
                 ImGui::TableNextColumn();
-                ImGui::Text(item->volumeUsd24Hr.c_str());
+                ImGui::Text("%.0f", std::stof(item->volumeUsd24Hr));
                 ImGui::TableNextColumn();
-                ImGui::Text(item->marketCapUsd.c_str());
+                ImGui::Text("%.0f", std::stof(item->marketCapUsd));
                 ImGui::PopID();
             }
         ImGui::EndTable();
