@@ -30,7 +30,7 @@ void ImGuiLayer::End()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImGuiLayer::CreateTableWidget(std::vector<CoinData> &CryptoCoinsData)
+void ImGuiLayer::CreateTableWidget(std::vector<CoinData> CryptoCoinsData)
 {
 
     static ImGuiTableFlags flags =

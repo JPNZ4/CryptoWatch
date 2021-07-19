@@ -19,12 +19,12 @@ std::string Data::getJSONValueString(nlohmann::json value)
     }
 }
 
-void Data::timer_start(unsigned int interval, std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss)
+void Data::timer_start(unsigned int interval)
 {
-    std::thread([this, interval, &CryptoCoinsData, &coinGainLoss]() {
+    std::thread([this, interval]() {
         while (true)
         {
-            this->networkCall(CryptoCoinsData, coinGainLoss);
+            this->networkCall();
             std::this_thread::sleep_for(std::chrono::milliseconds(interval));
         }
     }).detach();
@@ -100,30 +100,32 @@ void Data::coinHistoryRequest(std::string id, std::string interval, std::string 
     }
 }
 
-void Data::createBiggestGainsArray(std::vector<CoinData> CryptoCoinsData, CoinGainLoss &coinGainLoss)
+void Data::createBiggestGainsArray()
 {
-    auto size = CryptoCoinsData.size() - 1;
+    auto size = _cryptoCoinsData.size() - 1;
     // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), Data::sortVector);
-    std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
+    std::sort(_cryptoCoinsData.begin(), _cryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
         return this->sortVector(a, b);
     });
     for (int i = 0; i < 5; i++)
     {
-        coinGainLoss.largestValues[i] = std::stof(CryptoCoinsData[i].changePercent24Hr);
-        coinGainLoss.largestLabels[i] = CryptoCoinsData[i].symbol.c_str();
-        coinGainLoss.smallestValues[i] = std::stof(CryptoCoinsData[size - i].changePercent24Hr);
-        coinGainLoss.smallestLabels[i] = CryptoCoinsData[size - i].symbol.c_str();
+        _coinsGainsAndLosses.largestValues[i] = std::stof(_cryptoCoinsData[i].changePercent24Hr);
+        _coinsGainsAndLosses.largestLabels[i] = _cryptoCoinsData[i].symbol.c_str();
+        _coinsGainsAndLosses.smallestValues[i] = std::stof(_cryptoCoinsData[size - i].changePercent24Hr);
+        _coinsGainsAndLosses.smallestLabels[i] = _cryptoCoinsData[size - i].symbol.c_str();
     }
 }
 
-void Data::networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coinGainLoss)
+void Data::networkCall()
 {
-    auto jsonCoinData = nlohmann::json::parse(CurlRequest("api.coincap.io/v2/assets")); // Check for crash here? Happened once?
+    std::string apiResult = CurlRequest("api.coincap.io/v2/assets");
+    auto jsonCoinData = nlohmann::json::parse(apiResult); // TODO - Check for crash here? Happened once?
 
-    if (CryptoCoinsData.size() > 0)
+    const std::lock_guard<std::mutex> lock(_mutex);
+    if (_cryptoCoinsData.size() > 0)
     {
-        CryptoCoinsData.clear();
-    } 
+        _cryptoCoinsData.clear();
+    }
 
     // Check there is an entry with data - which contains the array of coin data
     if (jsonCoinData.find("data") != jsonCoinData.end())
@@ -151,17 +153,17 @@ void Data::networkCall(std::vector<CoinData> &CryptoCoinsData, CoinGainLoss &coi
                         getJSONValueString(element["vwap24Hr"]),
                     };
                     // Push CoinData struct to array
-                    CryptoCoinsData.push_back(coin);
+                    _cryptoCoinsData.push_back(coin);
                 }
             }
         }
     }
     // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), &Data::sortVector);
-    std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
-        return this->sortVector(a, b);
-    });
-    if (CryptoCoinsData.size() > 0)
+    // std::sort(CryptoCoinsData.begin(), CryptoCoinsData.end(), [this](const CoinData& a, const CoinData& b){
+    //     return this->sortVector(a, b);
+    // });
+    if (_cryptoCoinsData.size() > 0)
     {
-        createBiggestGainsArray(CryptoCoinsData, coinGainLoss);
+        createBiggestGainsArray();
     }
 }

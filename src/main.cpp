@@ -18,13 +18,9 @@ int main()
         return 0;
     }
 
-    // TODO - Move these into Data class
-    std::vector<CoinData> CryptoCoinsData;
-    CoinGainLoss coinsGainsAndLosses;
-
     Data data;
     // Start loop to poll for Table CrptoCoin data
-    data.timer_start(2000, CryptoCoinsData, coinsGainsAndLosses);
+    data.timer_start(2000);
     data.coinHistoryRequest("bitcoin", "d1", "1609459200000", "1626308160000"); // Example to get single coin history
 
     // Create ImGui object
@@ -35,10 +31,10 @@ int main()
         customGLFWWindow.ClearWindow();
         
         ImGuiLayer.Start(customGLFWWindow.GetWindowDimensions());
+        ImGuiLayer.CreateTableWidget(data.GetCoinData());
         ImGuiLayer.CreateLinePlotWidget(data.getXAxis(), data.getYAxis());
-        ImGuiLayer.CreateBarGraphWidget("Biggest Gains (24hrs)", coinsGainsAndLosses.largestLabels, coinsGainsAndLosses.largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
-        ImGuiLayer.CreateBarGraphWidget("Biggest Losses (24hrs)", coinsGainsAndLosses.smallestLabels, coinsGainsAndLosses.smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
-        ImGuiLayer.CreateTableWidget(CryptoCoinsData);
+        ImGuiLayer.CreateBarGraphWidget("Biggest Gains (24hrs)", data.GetCoinGainLoss().largestLabels, data.GetCoinGainLoss().largestValues, std::pair<float, float>(0.6666, 0), std::pair<float, float>(0.3333, 320));
+        ImGuiLayer.CreateBarGraphWidget("Biggest Losses (24hrs)", data.GetCoinGainLoss().smallestLabels, data.GetCoinGainLoss().smallestValues, std::pair<float, float>(0.6666, 300), std::pair<float, float>(0.3333, 320));        
         ImGuiLayer.End();
 
         customGLFWWindow.EndOfRunLoopWindowFunctions();
