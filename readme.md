@@ -4,7 +4,19 @@ This project has been made for the Udacity C++ Capstone project. The application
 
 # Build Instructions
 
+1. git clone https://github.com/JPNZ4/CryptoWatch.git
+2. cd CryptoWatch
+3. git submodule init
+4. git submodule update
+5. mkdir build
+6. cd build
+7. cmake ..
+8. make 
+
 # Running Instructions
+
+From the build directory run:
+    ./CryptoWatch
 
 # Description
 
