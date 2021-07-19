@@ -111,7 +111,8 @@ void ImGuiLayer::CreateLinePlotWidget(std::vector<double> xAxis, std::vector<dou
     ImGui::SetNextWindowSize(ImVec2(_windowWidth * 0.6666, 320));
     bool *p_open = NULL; // TODO - Make unique pointer
     ImGui::Begin("My First Tool", p_open, flags);
-    if (ImPlot::BeginPlot("Coin Value", "Date", "$USD"))
+    static ImPlotAxisFlags xAxisPlotFlags = ImPlotAxisFlags_Time; 
+    if (ImPlot::BeginPlot("Coin Value", "Date", "$USD", ImVec2(-1, 0), 0, xAxisPlotFlags))
     {
         ImPlot::PlotLine("CoinName**", xAxis.data(), yAxis.data(), 194);
         ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
